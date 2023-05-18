@@ -1,4 +1,5 @@
 streamlit==1.0.0
 yfinance
+matplotlib
 requests
 altair<5
