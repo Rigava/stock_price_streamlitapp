@@ -1,2 +1,4 @@
 streamlit==1.0.0
+yfinance
+requests
 altair<5
