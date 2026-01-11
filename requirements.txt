@@ -1,5 +1,6 @@
-streamlit==1.10.0
+ta
 yfinance
 matplotlib
 requests
-altair<5
+langchain_google_genai
+
