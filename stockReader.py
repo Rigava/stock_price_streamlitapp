@@ -96,7 +96,9 @@ def extract_json_object(text):
 # Streamlit app
 def main():
     st.title("📈 AI-Powered Technical Analysis")
-    symbol_list = ["RELIANCE", "SBIN","TCS","INFY","ITC"]
+    # symbol_list = ["RELIANCE", "SBIN","TCS","INFY","ITC"]
+    tickers = pd.read_html('https://ournifty.com/stock-list-in-nse-fo-futures-and-options.html#:~:text=NSE%20F%26O%20Stock%20List%3A%20%20%20%20SL,%20%201000%20%2052%20more%20rows%20')[0]
+    symbol_list = tickers.SYMBOL.to_list()
     symbol = st.selectbox("Select stock symbol", symbol_list)
     if symbol:
         ticker= symbol.upper() + ".NS"
@@ -104,10 +106,8 @@ def main():
             nifty_data = yf.download(tickers=ticker, period="5y")
             nifty_data.columns = nifty_data.columns.get_level_values(0)
             latest_price = nifty_data['Close'].iloc[-1]
-            st.success(f"The latest price is: {latest_price}")
-            # Plotting historical price movement
-            
-            # image = plot_chart(df)
+            st.success(f"The latest price of {symbol} is: {latest_price}")
+
             if st.button("Analyze"):
                 df = add_indicators(nifty_data)
                 st.plotly_chart(plot_chart(df), use_container_width=True)            
