@@ -86,6 +86,12 @@ def get_analysis(chart_summary):
   decoded_content = json.dumps(response.content)
   dict_resp = json.loads(decoded_content)
   return dict_resp  # <-- fix: .content
+# Helper functions
+def extract_json_object(text):
+    start = text.find('{')
+    end =  text.rfind('}')
+    json_text = text[start:end+1]
+    return json_text
 
 # Streamlit app
 def main():
@@ -107,8 +113,11 @@ def main():
                 st.plotly_chart(plot_chart(df), use_container_width=True)            
                 summary = chart_summary(df)
                 ai_response = get_analysis(summary)
+                json_str = extract_json_object(ai_response)
                 st.subheader("📊 Recommendation")
-                st.markdown(ai_response)
+                st.info(json_str['Action'],icon="ℹ️")
+                st.markdown(json_str['Justification'],icon="✅")
+                st.warning(json_str['Risk'],icon="⚠️")
             # Export data as CSV
             st.subheader("Export Data")
             if st.button("Export as CSV"):
