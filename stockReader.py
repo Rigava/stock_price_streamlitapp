@@ -4,6 +4,12 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import ta
 import plotly.graph_objects as go
+import json
+
+#LLM Config
+from langchain_google_genai import ChatGoogleGenerativeAI
+api_key = st.secrets.API_KEY
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=api_key)
 
 # Technical Indicators
 def add_indicators(df):
@@ -52,6 +58,34 @@ def chart_summary(df):
     - RSI Overbought (>70): {latest['RSI'] > 70}
     - RSI Oversold (<30): {latest['RSI'] < 30}
     """
+#LLM Prompt
+def get_analysis(chart_summary):
+
+  prompt = f"""
+  You are a stock trader specializing in technical analysis at a top financial institution.
+  Based on the following technical indicators, provide:
+  1. Recommendation: Buy / Sell / Hold
+  2. Justification in simple language
+  3. Risk factors
+
+  Technical data:
+  {chart_summary}
+
+  Provide the output in a valid JSON format with below fields and without escaped characters and formatting artifacts.
+  if the sample text does not contain enough information to provide the below fields return none but do not
+  create any information on your own.
+  '''
+  {{
+  
+  "Action": "...",
+  "Justification":"...",
+  "Risk": "....",
+  }}'''
+  """
+  response = llm.invoke(prompt)  # just pass plain string to LLM
+  decoded_content = json.dumps(response.content)
+  dict_resp = json.loads(decoded_content)
+  return dict_resp  # <-- fix: .content
 
 # Streamlit app
 def main():
@@ -72,9 +106,9 @@ def main():
                 df = add_indicators(nifty_data)
                 st.plotly_chart(plot_chart(df), use_container_width=True)            
                 summary = chart_summary(df)
-                # ai_response = analyze_with_llm(summary)
+                ai_response = get_analysis(summary)
                 st.subheader("📊 Recommendation")
-                st.markdown(summary)
+                st.markdown(airesponse)
             # Export data as CSV
             st.subheader("Export Data")
             if st.button("Export as CSV"):
