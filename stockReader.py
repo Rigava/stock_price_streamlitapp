@@ -117,7 +117,7 @@ def main():
                 data = json.loads(json_str)
                 st.subheader("📊 Recommendation")
                 st.info(data['Action'],icon="ℹ️")
-                st.markdown(data['Justification'],icon="✅")
+                st.info(data['Justification'],icon="✅")
                 st.warning(data['Risk'],icon="⚠️")
             # Export data as CSV
             st.subheader("Export Data")
