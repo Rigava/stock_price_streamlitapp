@@ -114,10 +114,11 @@ def main():
                 summary = chart_summary(df)
                 ai_response = get_analysis(summary)
                 json_str = extract_json_object(ai_response)
+                data = json.loads(json_str)
                 st.subheader("📊 Recommendation")
-                st.info(json_str['Action'],icon="ℹ️")
-                st.markdown(json_str['Justification'],icon="✅")
-                st.warning(json_str['Risk'],icon="⚠️")
+                st.info(data['Action'],icon="ℹ️")
+                st.markdown(data['Justification'],icon="✅")
+                st.warning(data['Risk'],icon="⚠️")
             # Export data as CSV
             st.subheader("Export Data")
             if st.button("Export as CSV"):
