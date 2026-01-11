@@ -3,5 +3,6 @@ yfinance
 matplotlib
 requests
 langchain_google_genai
+ta
 
 
