@@ -108,7 +108,7 @@ def main():
                 summary = chart_summary(df)
                 ai_response = get_analysis(summary)
                 st.subheader("📊 Recommendation")
-                st.markdown(airesponse)
+                st.markdown(ai_response)
             # Export data as CSV
             st.subheader("Export Data")
             if st.button("Export as CSV"):
