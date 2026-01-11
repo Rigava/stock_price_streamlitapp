@@ -5,6 +5,7 @@ from datetime import datetime
 import ta
 import plotly.graph_objects as go
 import json
+import pandas as pd
 
 #LLM Config
 from langchain_google_genai import ChatGoogleGenerativeAI
