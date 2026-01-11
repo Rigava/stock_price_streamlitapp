@@ -2,6 +2,8 @@ import streamlit as st
 import yfinance as yf
 import matplotlib.pyplot as plt
 from datetime import datetime
+import ta
+
 # Technical Indicators
 def add_indicators(df):
     df["RSI"] = ta.momentum.RSIIndicator(df["Close"]).rsi()
