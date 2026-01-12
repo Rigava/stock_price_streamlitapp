@@ -163,6 +163,7 @@ def main():
                 st.info(data['Action'],icon="ℹ️")
                 st.info(data['Justification'],icon="✅")
                 st.warning(data['Risk'],icon="⚠️")
+                st.info(data['Industry news'],icon="ℹ️")
             # Export data as CSV
             st.subheader("Export Data")
             if st.button("Export as CSV"):
