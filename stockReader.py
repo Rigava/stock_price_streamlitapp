@@ -80,6 +80,7 @@ def get_analysis(chart_summary):
   1. Recommendation: Buy / Sell / Hold
   2. Justification in simple language
   3. Risk factors
+  4. Industry news and overall macro economic factors affecting the stock.
 
   Technical data:
   {chart_summary}
@@ -93,6 +94,7 @@ def get_analysis(chart_summary):
   "Action": "...",
   "Justification":"...",
   "Risk": "....",
+  "Industry news::"..."
   }}'''
   """
   response = llm.invoke(prompt)  # just pass plain string to LLM
