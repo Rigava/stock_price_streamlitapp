@@ -161,7 +161,7 @@ def main():
                 data = json.loads(json_str)
                 
                 st.subheader("📊 Recommendation")
-                st.info(data['Summary'],icon=":bar_chart:")
+                st.info(data['Summary'],icon="ℹ️")
                 st.info(data['Action'],icon="ℹ️")
                 st.info(data['Justification'],icon="✅")
                 st.warning(data['Risk'],icon="⚠️")
