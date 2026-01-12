@@ -78,10 +78,9 @@ def get_analysis(chart_summary,symbol):
   You are a stock trader specializing in technical analysis at a top financial institution.
   Provide a short summary of Industry fundamentals and overall macro economic factors affecting the {symbol}.
   Based on short summary and the following technical indicators, provide:
-  1.Summary 
-  2.Recommendation: Buy / Sell / Hold
-  3.Justification in simple language
-  4.Risk factors
+  1.Recommendation: Buy / Sell / Hold
+  2.Justification in simple language
+  3.Risk factors
 
   Technical data:
   {chart_summary}
