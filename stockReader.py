@@ -122,7 +122,7 @@ def main():
         framelist = []
         for stock in symbol_list:
             yf_tick = stock.upper()+".NS"
-            s_data = yf.download(tickers=ticker, period="1y")
+            s_data = yf.download(tickers=yf_tick, period="1y")
             s_data.columns = nifty_data.columns.get_level_values(0)
             # Determine buy or sell recommendation based on last two rows of the data to provide buy & sell signals
             if shortlist_option=="MACD":                
