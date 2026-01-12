@@ -72,15 +72,16 @@ def chart_summary(df):
     - RSI Oversold (<30): {latest['RSI'] < 30}
     """
 #LLM Prompt
-def get_analysis(chart_summary):
+def get_analysis(chart_summary,symbol):
 
   prompt = f"""
   You are a stock trader specializing in technical analysis at a top financial institution.
-  Based on the following technical indicators, provide:
-  1. Recommendation: Buy / Sell / Hold
-  2. Justification in simple language
-  3. Risk factors
-  4. Industry news and overall macro economic factors affecting the stock.
+  Provide a short summary of Industry fundamentals and overall macro economic factors affecting the {symbol}.
+  Based on short summary and the following technical indicators, provide:
+  1.Summary 
+  2.Recommendation: Buy / Sell / Hold
+  3.Justification in simple language
+  4.Risk factors
 
   Technical data:
   {chart_summary}
@@ -90,11 +91,10 @@ def get_analysis(chart_summary):
   create any information on your own.
   '''
   {{
-  
+  "Summary::"...",
   "Action": "...",
   "Justification":"...",
-  "Risk": "....",
-  "Industry news::"..."
+  "Risk": "...."
   }}'''
   """
   response = llm.invoke(prompt)  # just pass plain string to LLM
@@ -156,14 +156,16 @@ def main():
                 df = add_indicators(nifty_data)
                 st.plotly_chart(plot_chart(df), use_container_width=True)            
                 summary = chart_summary(df)
-                ai_response = get_analysis(summary)
+                ai_response = get_analysis(summary,symbol)
                 json_str = extract_json_object(ai_response)
                 data = json.loads(json_str)
+                
                 st.subheader("📊 Recommendation")
+                st.info(data['Summary'],icon=":bar_chart:")
                 st.info(data['Action'],icon="ℹ️")
                 st.info(data['Justification'],icon="✅")
                 st.warning(data['Risk'],icon="⚠️")
-                st.info(data['Industry news'],icon="ℹ️")
+               
             # Export data as CSV
             st.subheader("Export Data")
             if st.button("Export as CSV"):
