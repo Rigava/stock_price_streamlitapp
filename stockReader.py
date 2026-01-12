@@ -112,7 +112,7 @@ def main():
     # symbol_list = ["RELIANCE", "SBIN","TCS","INFY","ITC"]
     tickers = pd.read_html('https://ournifty.com/stock-list-in-nse-fo-futures-and-options.html#:~:text=NSE%20F%26O%20Stock%20List%3A%20%20%20%20SL,%20%201000%20%2052%20more%20rows%20')[0]
     tickers = tickers[5:]
-    # tickers.remove("TATAMOTOR")
+    # tickers.remove("TATAMOTORs")
     symbol_list = tickers.SYMBOL.to_list()
     #SHORTLIST FEATURE
     shortlist_option = st.sidebar.selectbox("select strategy",["MACD","RSI","Breakout"])
@@ -121,7 +121,7 @@ def main():
         Sell = []
         Hold = []
         framelist = []
-        for stock in symbol_list[1:10]:
+        for stock in symbol_list[1:100]:
             yf_tick = stock.upper()+".NS"
             df = yf.download(tickers=yf_tick, period="1y")
             df.columns = df.columns.get_level_values(0)
