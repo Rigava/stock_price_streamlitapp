@@ -125,14 +125,15 @@ def main():
             df = yf.download(tickers=yf_tick, period="1y")
             df.columns = df.columns.get_level_values(0)
             df = MACDIndicator(df)
+            framelist.append(df)
             # Determine buy or sell recommendation based on last two rows of the data to provide buy & sell signals
             if shortlist_option=="MACD":                
                 if df['Decision MACD'].iloc[-1]=='Buy':    
-                    Buy.append(files)
+                    Buy.append(stock)
                 elif df['Decision MACD'].iloc[-1]=='Sell':
-                    Sell.append(files)
+                    Sell.append(stock)
                 else:
-                    Hold.append(files)  
+                    Hold.append(stock)  
         # Display stock data and recommendation
         st.write(":blue[List of stock with buy signal]",Buy)
         st.write(":blue[List of stock with sell signal]",Sell)
