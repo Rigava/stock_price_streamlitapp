@@ -20,6 +20,18 @@ def add_indicators(df):
     df["MACD"] = ta.trend.MACD(df["Close"]).macd()
     df["MACD_SIGNAL"] = ta.trend.MACD(df["Close"]).macd_signal()
     return df
+    
+def MACDIndicator(df):
+    df['EMA12']= df.Close.ewm(span=12).mean()
+    df['EMA26']= df.Close.ewm(span=26).mean()
+    df['MACD'] = df.EMA12 - df.EMA26
+    df['Signal'] = df.MACD.ewm(span=9).mean()
+    df['MACD_diff']=df.MACD - df.Signal
+    df.loc[(df['MACD_diff']>0) & (df.MACD_diff.shift(1)<0),'Decision MACD']='Buy'
+    df.loc[(df['MACD_diff']<0) & (df.MACD_diff.shift(1)>0),'Decision MACD']='Sell'
+    df.dropna()
+    print('MACD indicators added')
+    return df
 # Plotly Charts
 def plot_chart(df):
     fig = go.Figure()
@@ -101,6 +113,31 @@ def main():
     tickers = pd.read_html('https://ournifty.com/stock-list-in-nse-fo-futures-and-options.html#:~:text=NSE%20F%26O%20Stock%20List%3A%20%20%20%20SL,%20%201000%20%2052%20more%20rows%20')[0]
     tickers = tickers[5:]
     symbol_list = tickers.SYMBOL.to_list()
+    #SHORTLIST FEATURE
+    shortlist_option = st.sidebar.selectbox("select strategy",["MACD","RSI","Breakout"])
+    if st.button("Shortlist", use_container_width=True):
+        Buy = []
+        Sell = []
+        Hold = []
+        framelist = []
+        for stock in symbol_list:
+            yf_tick = stock.upper()+".NS"
+            s_data = yf.download(tickers=ticker, period="1y")
+            s_data.columns = nifty_data.columns.get_level_values(0)
+            # Determine buy or sell recommendation based on last two rows of the data to provide buy & sell signals
+            if shortlist_option=="MACD":                
+                if df['Decision MACD'].iloc[-1]=='Buy':    
+                    Buy.append(files)
+                elif df['Decision MACD'].iloc[-1]=='Sell':
+                    Sell.append(files)
+                else:
+                    Hold.append(files)  
+        # Display stock data and recommendation
+        st.write(":blue[List of stock with buy signal]",Buy)
+        st.write(":blue[List of stock with sell signal]",Sell)
+
+
+    
     symbol = st.selectbox("Select stock symbol", symbol_list)
     if symbol:
         ticker= symbol.upper() + ".NS"
