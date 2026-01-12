@@ -120,7 +120,7 @@ def main():
         Sell = []
         Hold = []
         framelist = []
-        for stock in symbol_list:
+        for stock in symbol_list[1:5]:
             yf_tick = stock.upper()+".NS"
             df = yf.download(tickers=yf_tick, period="1y")
             df.columns = df.columns.get_level_values(0)
