@@ -124,6 +124,7 @@ def main():
             yf_tick = stock.upper()+".NS"
             df = yf.download(tickers=yf_tick, period="1y")
             df.columns = df.columns.get_level_values(0)
+            df = MACDIndicator(df)
             # Determine buy or sell recommendation based on last two rows of the data to provide buy & sell signals
             if shortlist_option=="MACD":                
                 if df['Decision MACD'].iloc[-1]=='Buy':    
