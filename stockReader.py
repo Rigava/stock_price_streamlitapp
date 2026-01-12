@@ -123,7 +123,7 @@ def main():
         framelist = []
         for stock in symbol_list[1:10]:
             yf_tick = stock.upper()+".NS"
-            df = yf.download(tickers=yf_tick, period="1m")
+            df = yf.download(tickers=yf_tick, period="1y")
             df.columns = df.columns.get_level_values(0)
             df = MACDIndicator(df)
             framelist.append(df)
