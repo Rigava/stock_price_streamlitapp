@@ -152,9 +152,8 @@ def main():
     # tickers.remove("TATAMOTORS")
     symbol_list = tickers.SYMBOL.to_list()
     #SHORTLIST FEATURE
-    
+    shortlist_option = st.sidebar.selectbox("select strategy",["MACD","Value","Growth","RSI","Breakout"])
     if st.button("Shortlist", use_container_width=True):
-        shortlist_option = st.sidebar.selectbox("select strategy",["MACD","Value","Growth","RSI","Breakout"])
         Buy = []
         Sell = []
         Hold = []
