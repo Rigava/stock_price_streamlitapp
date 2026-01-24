@@ -158,7 +158,7 @@ def main():
         Sell = []
         Hold = []
         framelist = [] # add OHLC data
-        # add fundamental data
+        data =[] # add fundamental data
         for stock in symbol_list[1:100]:
             yf_tick = stock.upper()+".NS"
             df = yf.download(tickers=yf_tick, period="1y")
@@ -166,10 +166,9 @@ def main():
             df = MACDIndicator(df)
             framelist.append(df)
             #Fetch fundamentals
-            data = get_value_fundamentals(stock)
-            df_funda = pd.DataFrame([data])
-            df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
-            df_funda.sort_values(by="Value Score", ascending=False)
+            data.append( get_value_fundamentals(stock))
+
+
             # Determine buy or sell recommendation based on last two rows of the data to provide buy & sell signals
             if shortlist_option=="MACD":                
                 if df['Decision MACD'].iloc[-1]=='Buy':    
@@ -178,13 +177,19 @@ def main():
                     Sell.append(stock)
                 else:
                     Hold.append(stock)  
-            if shortlist_option=="Value": 
-                if df_funda['Value Score'].values > 4:
-                    Buy.append(stock)
-                elif df_funda['Value Score'].values <=2:
-                    Sell.append(stock)
-                else:
-                    Hold.append(stock)
+        df_funda = pd.DataFrame([data])
+        df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
+        if shortlist_option=="Value": 
+            filter_buy = df_funda[df_funda['Value Score'] > 4]
+            Buy = filtered_df['Ticker'].tolist()
+            filter_sell = df_funda[df_funda['Value Score'] < 1]
+            Sell = filtered_df['Ticker'].tolist()
+            # if df_funda['Value Score'].values > 4:
+            #     Buy.append(stock)
+            # elif df_funda['Value Score'].values <=2:
+            #     Sell.append(stock)
+            # else:
+            #     Hold.append(stock)
         # Display stock data and recommendation
         st.write(":blue[List of stock with buy signal]",Buy)
         st.write(":blue[List of stock with sell signal]",Sell)
