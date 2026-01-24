@@ -149,16 +149,17 @@ def main():
     # symbol_list = ["RELIANCE", "SBIN","TCS","INFY","ITC"]
     tickers = pd.read_html('https://ournifty.com/stock-list-in-nse-fo-futures-and-options.html#:~:text=NSE%20F%26O%20Stock%20List%3A%20%20%20%20SL,%20%201000%20%2052%20more%20rows%20')[0]
     tickers = tickers[5:]
-    # tickers.remove("TATAMOTORs")
+    tickers.remove("TATAMOTORS")
     symbol_list = tickers.SYMBOL.to_list()
     #SHORTLIST FEATURE
-    shortlist_option = st.sidebar.selectbox("select strategy",["MACD","Value","Growth","RSI","Breakout"])
+    
     if st.button("Shortlist", use_container_width=True):
+        shortlist_option = st.sidebar.selectbox("select strategy",["MACD","Value","Growth","RSI","Breakout"])
         Buy = []
         Sell = []
         Hold = []
         framelist = [] # add OHLC data
-        data = [] # add fundamental data
+        # add fundamental data
         for stock in symbol_list[1:100]:
             yf_tick = stock.upper()+".NS"
             df = yf.download(tickers=yf_tick, period="1y")
@@ -166,8 +167,8 @@ def main():
             df = MACDIndicator(df)
             framelist.append(df)
             #Fetch fundamentals
-            data.append(get_value_fundamentals(stock))
-            df_funda = pd.DataFrame(data)
+            data = get_value_fundamentals(stock)
+            df_funda = pd.DataFrame([data])
             df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
             df_funda.sort_values(by="Value Score", ascending=False)
             # Determine buy or sell recommendation based on last two rows of the data to provide buy & sell signals
@@ -179,17 +180,15 @@ def main():
                 else:
                     Hold.append(stock)  
             if shortlist_option=="Value": 
-                if df_funda['Value Score']>4:
+                if df_funda['Value Score'].values > 4:
                     Buy.append(stock)
-                elif df_funda['Value Score']<2:
+                elif df_funda['Value Score'].values <=2:
                     Sell.append(stock)
                 else:
                     Hold.append(stock)
         # Display stock data and recommendation
         st.write(":blue[List of stock with buy signal]",Buy)
         st.write(":blue[List of stock with sell signal]",Sell)
-
-
     
     symbol = st.selectbox("Select stock symbol", symbol_list)
     if symbol:
