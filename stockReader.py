@@ -180,12 +180,13 @@ def main():
                 else:
                     Hold.append(stock)  
         df_funda = pd.DataFrame([data])
-        df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
-        if shortlist_option=="Value": 
-            filter_buy = df_funda[df_funda['Value Score'] > 4]
-            Buy = filtered_df['Ticker'].tolist()
-            filter_sell = df_funda[df_funda['Value Score'] < 1]
-            Sell = filtered_df['Ticker'].tolist()
+        st.write(df_funda)
+        # df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
+        # if shortlist_option=="Value": 
+            # filter_buy = df_funda[df_funda['Value Score'] > 4]
+            # Buy = filtered_df['Ticker'].tolist()
+            # filter_sell = df_funda[df_funda['Value Score'] < 1]
+            # Sell = filtered_df['Ticker'].tolist()
             # if df_funda['Value Score'].values > 4:
             #     Buy.append(stock)
             # elif df_funda['Value Score'].values <=2:
