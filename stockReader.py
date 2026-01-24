@@ -148,9 +148,11 @@ def main():
     st.title("📈 AI-Powered Technical Analysis")
     # symbol_list = ["RELIANCE", "SBIN","TCS","INFY","ITC"]
     tickers = pd.read_html('https://ournifty.com/stock-list-in-nse-fo-futures-and-options.html#:~:text=NSE%20F%26O%20Stock%20List%3A%20%20%20%20SL,%20%201000%20%2052%20more%20rows%20')[0]
-    tickers = tickers[5:]
-    # tickers.remove("TATAMOTORS")
+   
     symbol_list = tickers.SYMBOL.to_list()
+    symbol_list= tickers[5:]
+    symbol_list.remove("TATAMOTORS")
+
     #SHORTLIST FEATURE
     shortlist_option = st.sidebar.selectbox("select strategy",["MACD","Value","Growth","RSI","Breakout"])
     if st.button("Shortlist", use_container_width=True):
