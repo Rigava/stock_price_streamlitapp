@@ -106,7 +106,43 @@ def extract_json_object(text):
     end =  text.rfind('}')
     json_text = text[start:end+1]
     return json_text
+def get_value_fundamentals(ticker):
+    stock = yf.Ticker(ticker)
+    info = stock.info
 
+    return {
+        "Ticker": ticker,
+        "Market Cap": info.get("marketCap"),
+        "PE": info.get("trailingPE"),
+        "PB": info.get("priceToBook"),
+        "EV_EBITDA": info.get("enterpriseToEbitda"),
+        "ROE": info.get("returnOnEquity"),
+        "Debt_Equity": info.get("debtToEquity"),
+        "Current_Ratio": info.get("currentRatio"),
+        "Operating_Margin": info.get("operatingMargins"),
+        "FCF": info.get("freeCashflow")
+    }
+def value_score(row):
+    score = 0
+
+    if row["PE"] and row["PE"] < 15:
+        score += 1
+    if row["PB"] and row["PB"] < 1.5:
+        score += 1
+    if row["EV_EBITDA"] and row["EV_EBITDA"] < 10:
+        score += 1
+    if row["Debt_Equity"] and row["Debt_Equity"] < 60:
+        score += 1
+    if row["Current_Ratio"] and row["Current_Ratio"] > 1.5:
+        score += 1
+    if row["ROE"] and row["ROE"] > 0.15:
+        score += 1
+    if row["Operating_Margin"] and row["Operating_Margin"] > 0.15:
+        score += 1
+    if row["FCF"] and row["FCF"] > 0:
+        score += 1
+
+    return score
 # Streamlit app
 def main():
     st.title("📈 AI-Powered Technical Analysis")
@@ -116,18 +152,24 @@ def main():
     # tickers.remove("TATAMOTORs")
     symbol_list = tickers.SYMBOL.to_list()
     #SHORTLIST FEATURE
-    shortlist_option = st.sidebar.selectbox("select strategy",["MACD","RSI","Breakout"])
+    shortlist_option = st.sidebar.selectbox("select strategy",["MACD","Value","Growth","RSI","Breakout"])
     if st.button("Shortlist", use_container_width=True):
         Buy = []
         Sell = []
         Hold = []
-        framelist = []
+        framelist = [] # add OHLC data
+        data = [] # add fundamental data
         for stock in symbol_list[1:100]:
             yf_tick = stock.upper()+".NS"
             df = yf.download(tickers=yf_tick, period="1y")
             df.columns = df.columns.get_level_values(0)
             df = MACDIndicator(df)
             framelist.append(df)
+            #Fetch fundamentals
+            data.append(get_value_fundamentals(stock))
+            df_funda = pd.DataFrame(data)
+            df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
+            df_funda.sort_values(by="Value Score", ascending=False)
             # Determine buy or sell recommendation based on last two rows of the data to provide buy & sell signals
             if shortlist_option=="MACD":                
                 if df['Decision MACD'].iloc[-1]=='Buy':    
@@ -136,6 +178,13 @@ def main():
                     Sell.append(stock)
                 else:
                     Hold.append(stock)  
+            if shortlist_option=="Value": 
+                if df_funda['Value Sore']>4:
+                    Buy.append(stock)
+                elif df_funda['Value Sore']<2:
+                    Sell.append(stock)
+                else:
+                    Hold.append(stock)
         # Display stock data and recommendation
         st.write(":blue[List of stock with buy signal]",Buy)
         st.write(":blue[List of stock with sell signal]",Sell)
