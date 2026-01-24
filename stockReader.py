@@ -179,9 +179,9 @@ def main():
                 else:
                     Hold.append(stock)  
             if shortlist_option=="Value": 
-                if df_funda['Value Sore']>4:
+                if df_funda['Value Score']>4:
                     Buy.append(stock)
-                elif df_funda['Value Sore']<2:
+                elif df_funda['Value Score']<2:
                     Sell.append(stock)
                 else:
                     Hold.append(stock)
