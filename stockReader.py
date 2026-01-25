@@ -131,7 +131,7 @@ def get_value_fundamentals(ticker):
         ratio["Debt"] = balance.loc['Total Debt'][0]
         ratio["Net Income"] = income.loc["Net Income"][0]
         ratio["d_Debt_Equity"] = round(debt / equity, 2)
-        ratio["d_ROE"} = round((netIn / equity)*100,2)
+        ratio["d_ROE"] = round((netIn / equity)*100,2)
     except Exception:
         pass
     return ratio
