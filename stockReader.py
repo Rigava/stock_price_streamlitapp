@@ -109,7 +109,9 @@ def extract_json_object(text):
 def get_value_fundamentals(ticker):
     stock = yf.Ticker(ticker)
     info = stock.info
-
+    balance = stock.balance_sheet
+    income = stock.financials
+    
     return {
         "Ticker": ticker,
         "Market Cap": info.get("marketCap"),
@@ -120,7 +122,10 @@ def get_value_fundamentals(ticker):
         "Debt_Equity": info.get("debtToEquity"),
         "Current_Ratio": info.get("currentRatio"),
         "Operating_Margin": info.get("operatingMargins"),
-        "FCF": info.get("freeCashflow")
+        "FCF": info.get("freeCashflow"),
+        "Equity":balance.loc['Stockholder Equity'][0],
+        "Debt":balance.loc['Total Debt'][0],
+        "Net Income": income.loc["Net Income"]
     }
 def value_score(row):
     score = 0
@@ -161,7 +166,7 @@ def main():
         Hold = []
         framelist = [] # add OHLC data
         data =[] # add fundamental data
-        for stock in symbol_list[1:100]:
+        for stock in symbol_list[1:10]:
             yf_tick = stock.upper()+".NS"
             df = yf.download(tickers=yf_tick, period="1y")
             df.columns = df.columns.get_level_values(0)
@@ -179,6 +184,7 @@ def main():
                     Sell.append(stock)
                 else:
                     Hold.append(stock)  
+        st.write(data)
         df_funda = pd.DataFrame([data])
         st.write(df_funda)
         # df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
