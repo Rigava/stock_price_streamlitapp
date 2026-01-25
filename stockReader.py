@@ -164,8 +164,8 @@ def main():
     tickers = pd.read_html('https://ournifty.com/stock-list-in-nse-fo-futures-and-options.html#:~:text=NSE%20F%26O%20Stock%20List%3A%20%20%20%20SL,%20%201000%20%2052%20more%20rows%20')[0]
    
     symbol_list = tickers.SYMBOL.to_list()
-    symbol_list= symbol_list[5:100]
-    # symbol_list.remove("TATAMOTORS")
+    symbol_list= symbol_list[5:]
+    symbol_list.remove("TATAMOTORS")
 
     #SHORTLIST FEATURE
     shortlist_option = st.sidebar.selectbox("select strategy",["MACD","Value","Growth","RSI","Breakout"])
@@ -175,7 +175,7 @@ def main():
         Hold = []
         framelist = [] # add OHLC data
         data =[] # add fundamental data
-        for stock in symbol_list[1:10]:
+        for stock in symbol_list:
             yf_tick = stock.upper()+".NS"
             df = yf.download(tickers=yf_tick, period="1y")
             df.columns = df.columns.get_level_values(0)
@@ -197,7 +197,7 @@ def main():
 
         df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
         with st.expander("Show the Fundamentals",expanded = False):
-            st.dataframe(df_funda[['Ticker','Net Income','Equity','Debt','PE','PB','ROE','Debt_Equity','Current_Ratio','EV_EBITDA','FCF']])
+            st.dataframe(df_funda[['Ticker','Net Income','Equity','Debt','PE','PB','ROE','Debt_Equity','Current_Ratio','EV_EBITDA','FCF','Value Score']])
         if shortlist_option=="Value": 
             filter_buy = df_funda[df_funda['Value Score'] > 4]
             Buy = filter_buy['Ticker'].tolist()
