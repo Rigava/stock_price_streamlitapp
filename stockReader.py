@@ -205,8 +205,10 @@ def main():
             Sell = filter_sell['Ticker'].tolist()
 
         # Display stock data and recommendation
-        st.write(":blue[List of stock with buy signal]",Buy)
-        st.write(":blue[List of stock with sell signal]",Sell)
+        st.write(":blue[List of stock with positive signal]")
+        st.table({"Stocks":Buy})
+        st.write(":blue[List of stock with negative signal]")
+        st.table({"Stocks":Sell})
     
     symbol = st.selectbox("Select stock symbol", symbol_list)
     if symbol:
