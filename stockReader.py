@@ -199,9 +199,9 @@ def main():
         df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
         if shortlist_option=="Value": 
             filter_buy = df_funda[df_funda['Value Score'] > 4]
-            Buy = filtered_df['Ticker'].tolist()
-            filter_sell = df_funda[df_funda['Value Score'] < 1]
-            Sell = filtered_df['Ticker'].tolist()
+            Buy = filtered_buy['Ticker'].tolist()
+            filter_sell = df_funda[df_funda['Value Score'] < 2]
+            Sell = filtered_sell['Ticker'].tolist()
             if df_funda['Value Score'].values > 4:
                 Buy.append(stock)
             elif df_funda['Value Score'].values <=2:
