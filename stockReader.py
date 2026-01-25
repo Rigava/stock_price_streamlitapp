@@ -145,7 +145,7 @@ def value_score(row):
         score += 1
     if row["EV_EBITDA"] and row["EV_EBITDA"] < 10:
         score += 1
-    if row["Debt_Equity"] and row["Debt_Equity"] < 60:
+    if row["d_Debt_Equity"] and row["d_Debt_Equity"] < 1:
         score += 1
     if row["Current_Ratio"] and row["Current_Ratio"] > 1.5:
         score += 1
@@ -196,18 +196,18 @@ def main():
         st.write(data)
         df_funda = pd.DataFrame(data)
         st.write(df_funda)
-        # df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
-        # if shortlist_option=="Value": 
-            # filter_buy = df_funda[df_funda['Value Score'] > 4]
-            # Buy = filtered_df['Ticker'].tolist()
-            # filter_sell = df_funda[df_funda['Value Score'] < 1]
-            # Sell = filtered_df['Ticker'].tolist()
-            # if df_funda['Value Score'].values > 4:
-            #     Buy.append(stock)
-            # elif df_funda['Value Score'].values <=2:
-            #     Sell.append(stock)
-            # else:
-            #     Hold.append(stock)
+        df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
+        if shortlist_option=="Value": 
+            filter_buy = df_funda[df_funda['Value Score'] > 4]
+            Buy = filtered_df['Ticker'].tolist()
+            filter_sell = df_funda[df_funda['Value Score'] < 1]
+            Sell = filtered_df['Ticker'].tolist()
+            if df_funda['Value Score'].values > 4:
+                Buy.append(stock)
+            elif df_funda['Value Score'].values <=2:
+                Sell.append(stock)
+            else:
+                Hold.append(stock)
         # Display stock data and recommendation
         st.write(":blue[List of stock with buy signal]",Buy)
         st.write(":blue[List of stock with sell signal]",Sell)
