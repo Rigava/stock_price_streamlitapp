@@ -111,22 +111,25 @@ def get_value_fundamentals(ticker):
     info = stock.info
     balance = stock.balance_sheet
     income = stock.financials
+    ratios={}
+    try:
+        ratio["Ticker"] = ticker,
+        ratio["Market Cap"] = info.get("marketCap"),
+        ratio["PE"] = info.get("trailingPE"),
+        ratio["PB"] = info.get("priceToBook"),
+        ratio["EV_EBITDA"] = info.get("enterpriseToEbitda"),
+        ratio["ROE"] = info.get("returnOnEquity"),
+        ratio["Debt_Equity"] = info.get("debtToEquity"),
+        ratio["Current_Ratio"] = info.get("currentRatio"),
+        ratio["Operating_Margin"] = info.get("operatingMargins"),
+        ratio["FCF"] = info.get("freeCashflow"),
+        ratio["Equity"] = balance.loc['Stockholders Equity'][0],
+        ratio["Debt"] = balance.loc['Total Debt'][0],
+        ratio["Net Income"] = income.loc["Net Income"]
+    except Exception:
+        pass
+    return ratios
     
-    return {
-        "Ticker": ticker,
-        "Market Cap": info.get("marketCap"),
-        "PE": info.get("trailingPE"),
-        "PB": info.get("priceToBook"),
-        "EV_EBITDA": info.get("enterpriseToEbitda"),
-        "ROE": info.get("returnOnEquity"),
-        "Debt_Equity": info.get("debtToEquity"),
-        "Current_Ratio": info.get("currentRatio"),
-        "Operating_Margin": info.get("operatingMargins"),
-        "FCF": info.get("freeCashflow"),
-        "Equity":balance.loc['Stockholder Equity'][0],
-        "Debt":balance.loc['Total Debt'][0],
-        "Net Income": income.loc["Net Income"]
-    }
 def value_score(row):
     score = 0
 
