@@ -111,24 +111,30 @@ def get_value_fundamentals(ticker):
     info = stock.info
     balance = stock.balance_sheet
     income = stock.financials
-    ratios={}
+    ratio={}
     try:
         ratio["Ticker"] = ticker,
-        ratio["Market Cap"] = info.get("marketCap"),
-        ratio["PE"] = info.get("trailingPE"),
-        ratio["PB"] = info.get("priceToBook"),
-        ratio["EV_EBITDA"] = info.get("enterpriseToEbitda"),
-        ratio["ROE"] = info.get("returnOnEquity"),
-        ratio["Debt_Equity"] = info.get("debtToEquity"),
-        ratio["Current_Ratio"] = info.get("currentRatio"),
-        ratio["Operating_Margin"] = info.get("operatingMargins"),
-        ratio["FCF"] = info.get("freeCashflow"),
-        ratio["Equity"] = balance.loc['Stockholders Equity'][0],
-        ratio["Debt"] = balance.loc['Total Debt'][0],
-        ratio["Net Income"] = income.loc["Net Income"]
+        ratio["Market Cap"] = info.get("marketCap")
+        ratio["PE"] = info.get("trailingPE")
+        ratio["PB"] = info.get("priceToBook")
+        ratio["EV_EBITDA"] = info.get("enterpriseToEbitda")
+        ratio["ROE"] = info.get("returnOnEquity")
+        ratio["Debt_Equity"] = info.get("debtToEquity")
+        ratio["Current_Ratio"] = info.get("currentRatio")
+        ratio["Operating_Margin"] = info.get("operatingMargins")
+        ratio["FCF"] = info.get("freeCashflow")
+
+        netIn = income.loc["Net Income"][0]
+        equity = balance.loc['Stockholders Equity'][0]
+        debt =  balance.loc['Total Debt'][0]
+        ratio["Equity"] = balance.loc['Stockholders Equity'][0]
+        ratio["Debt"] = balance.loc['Total Debt'][0]
+        ratio["Net Income"] = income.loc["Net Income"][0]
+        ratio["d_Debt_Equity"] = round(debt / equity, 2)
+        ratio["d_ROE"} = round((netIn / equity)*100,2)
     except Exception:
         pass
-    return ratios
+    return ratio
     
 def value_score(row):
     score = 0
@@ -143,7 +149,7 @@ def value_score(row):
         score += 1
     if row["Current_Ratio"] and row["Current_Ratio"] > 1.5:
         score += 1
-    if row["ROE"] and row["ROE"] > 0.15:
+    if row["d_ROE"] and row["d_ROE"] > 15:
         score += 1
     if row["Operating_Margin"] and row["Operating_Margin"] > 0.15:
         score += 1
@@ -176,7 +182,7 @@ def main():
             df = MACDIndicator(df)
             framelist.append(df)
             #Fetch fundamentals
-            data.append( get_value_fundamentals(stock))
+            data.append( get_value_fundamentals(yf_tick))
 
 
             # Determine buy or sell recommendation based on last two rows of the data to provide buy & sell signals
@@ -188,7 +194,7 @@ def main():
                 else:
                     Hold.append(stock)  
         st.write(data)
-        df_funda = pd.DataFrame([data])
+        df_funda = pd.DataFrame(data)
         st.write(df_funda)
         # df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
         # if shortlist_option=="Value": 
