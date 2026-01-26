@@ -61,7 +61,7 @@ with st.spinner("Scanning NASDAQ stocks..."):
 
         df["RSI"] = compute_rsi(df["Close"], rsi_period)
         latest_rsi = df["RSI"].iloc[-1]
-        latest_close = df['Close'].iloc[-1]
+        latest_close = df['Close'].iloc[-1].values[0]
         
 
         data.append({
