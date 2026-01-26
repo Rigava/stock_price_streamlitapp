@@ -61,9 +61,12 @@ with st.spinner("Scanning NASDAQ stocks..."):
 
         df["RSI"] = compute_rsi(df["Close"], rsi_period)
         latest_rsi = df["RSI"].iloc[-1]
+        latest_close = df['Close'].iloc[-1]
+        
 
         data.append({
             "Ticker": ticker,
+            "LTP": latest_close,
             "RSI": round(latest_rsi, 2),
             "Valuation": classify_rsi(latest_rsi)
         })
