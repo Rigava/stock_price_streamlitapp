@@ -57,17 +57,17 @@ data = []
 with st.spinner("Scanning Big B NASDAQ stocks..."):
     for ticker in tickers:
         df = yf.download(ticker, period=period, progress=False)
-
+        df.columns = df.columns.get_level_values(0)
         if df.empty:
             continue
 
         df["RSI"] = compute_rsi(df["Close"], rsi_period)
         df['SMA_50'] = df['Close'].rolling(50).mean()
-        df.dropna(inplace=True)
-        df['%Change'] = df['Close']/df['SMA_50']
+        df= df.dropna()
+        df['%Change'] = df['Close'] / df['SMA_50']
         latest_rsi = df["RSI"].iloc[-1]
-        latest_close = df['Close'].iloc[-1].values[0]
-        latest_percent = df['%Change'].iloc[-1].values[0]
+        latest_close = df['Close'].iloc[-1]
+        latest_percent = df['%Change'].iloc[-1]
         
         
 
