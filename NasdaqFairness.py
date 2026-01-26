@@ -62,15 +62,21 @@ with st.spinner("Scanning Big B NASDAQ stocks..."):
             continue
 
         df["RSI"] = compute_rsi(df["Close"], rsi_period)
+        df['SMA_50'] = df['Close'].rolling(50).mean()
+        df.dropna(inplace=True)
+        df['%Change'] = df['Close']/df['SMA_50']
         latest_rsi = df["RSI"].iloc[-1]
         latest_close = df['Close'].iloc[-1].values[0]
+        latest_percent = df['%Change'].iloc[-1].values[0]
+        
         
 
         data.append({
             "Ticker": ticker,
             "LTP": latest_close,
             "RSI": round(latest_rsi, 2),
-            "Valuation": classify_rsi(latest_rsi)
+            "Valuation": classify_rsi(latest_rsi),
+            "Percent": latest_percent 
         })
 
 result_df = pd.DataFrame(data)
