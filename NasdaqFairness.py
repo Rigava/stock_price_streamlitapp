@@ -37,6 +37,12 @@ NASDAQ_SAMPLE = [
     "AAPL", "MSFT", "NVDA", "TSLA", "AMZN",
     "META", "GOOGL", "NFLX", "AMD", "INTC"
 ]
+tickers = [
+    "ACHR","INTC","ARM","NVDA","TSLA","MSFT","GOOGL","AAPL","AMZN",
+    "META","AVGO","DELL","DEO","AMD","FLY","COIN","ASML","JOBY",
+    "LULU","PLTR","NIO","ISRG","CRWD","KO","BRK-B","WMT","CRM"
+]
+
 # Streamlit app
 st.set_page_config(layout="wide")
 st.title("NASDAQ RSI Valuation Scanner")
@@ -47,7 +53,7 @@ rsi_period = st.sidebar.slider("RSI Period", 7, 21, 14)
 data = []
 
 with st.spinner("Scanning NASDAQ stocks..."):
-    for ticker in NASDAQ_SAMPLE:
+    for ticker in tickers:
         df = yf.download(ticker, period=period, progress=False)
 
         if df.empty:
