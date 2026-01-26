@@ -64,7 +64,7 @@ with st.spinner("Scanning Big B NASDAQ stocks..."):
         df["RSI"] = compute_rsi(df["Close"], rsi_period)
         df['SMA_50'] = df['Close'].rolling(50).mean()
         df= df.dropna()
-        df['%Change'] = df['Close'] / df['SMA_50']
+        df['%Change'] = ((df['Close'] / df['SMA_50'])-1)*100
         latest_rsi = df["RSI"].iloc[-1]
         latest_close = df['Close'].iloc[-1]
         latest_percent = df['%Change'].iloc[-1]
