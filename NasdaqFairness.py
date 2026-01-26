@@ -44,15 +44,15 @@ tickers = [
 ]
 
 # Streamlit app
-st.set_page_config(layout="wide")
-st.title("NASDAQ RSI Valuation Scanner")
+st.set_page_config(layout="wide",title = "BIG B", icon=":material/account_circle:")
+st.title("NASDAQ RSI Valuation Scanner-start small think big")
 
 period = st.sidebar.selectbox("Timeframe", ["6mo", "1y", "2y"])
 rsi_period = st.sidebar.slider("RSI Period", 7, 21, 14)
 
 data = []
 
-with st.spinner("Scanning NASDAQ stocks..."):
+with st.spinner("Scanning Big B NASDAQ stocks..."):
     for ticker in tickers:
         df = yf.download(ticker, period=period, progress=False)
 
