@@ -46,7 +46,7 @@ tickers = [
 # Streamlit app
 # st.set_page_config(layout="wide")
 # --- PAGE SETUP ---
-st.set_page_config(page_title="Decarb sailor", page_icon=":cop:",layout="wide")
+st.set_page_config(page_title="BIG B sailor", page_icon=":cop:",layout="wide")
 st.title("NASDAQ RSI Valuation Scanner-start small think big")
 
 period = st.sidebar.selectbox("Timeframe", ["6mo", "1y", "2y"])
