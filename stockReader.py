@@ -197,7 +197,7 @@ def main():
 
         df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
         with st.expander("Show the Fundamentals",expanded = False):
-            st.dataframe(df_funda[['Ticker','Net Income','Equity','Debt','PE','PB','ROE','Debt_Equity','Current_Ratio','EV_EBITDA','FCF','Value Score']])
+            st.dataframe(df_funda[['Ticker','Net Income','Equity','Debt','PE','PB','d_ROE','d_Debt_Equity','Current_Ratio','EV_EBITDA','FCF','Value Score']])
         if shortlist_option=="Value": 
             filter_buy = df_funda[df_funda['Value Score'] > 4]
             Buy = filter_buy['Ticker'].tolist()
