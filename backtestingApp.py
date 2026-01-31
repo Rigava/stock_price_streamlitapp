@@ -363,7 +363,8 @@ def main():
                 st.plotly_chart(plot_price_with_trades(df,trades,ticker))
                 metrics = performance_metrics(trades,ticker)
                 result = pd.DataFrame([metrics])
-                with st.expander("Show the Fundamentals",expanded = False):
+                with st.expander("Show the backtest trades and performance",expanded = False):
+                    st.dataframe(trades)
                     st.dataframe(result)
                   
             if st.button("Analyze"):
