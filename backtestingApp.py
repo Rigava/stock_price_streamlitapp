@@ -46,7 +46,106 @@ def compute_adx(df, period=14):
     dx = (abs(plus_di - minus_di) / (plus_di + minus_di)) * 100
     adx = dx.rolling(period).mean()
     return adx
-  
+def compute_atr(df, period=14):
+    high_low = df["High"] - df["Low"]
+    high_close = np.abs(df["High"] - df["Close"].shift())
+    low_close = np.abs(df["Low"] - df["Close"].shift())
+
+    tr = pd.concat([high_low, high_close, low_close], axis=1).max(axis=1)
+    return tr.rolling(period).mean()
+# Fully Corrected Backtest Function WITHOUT ADX regime strategy1
+def backtest_rsi_mean_reversion(df):
+    df = df.copy()
+    df["ATR"] = compute_atr(df)
+    position = 0
+    entry_price = None
+    stop_loss = None
+    trades = []
+    for i in range(1, len(df)):
+        price = float(df["Close"].iloc[i])
+        rsi = df["RSI"].iloc[i]
+        atr = df["ATR"].iloc[i]
+        # Skip invalid rows
+        if pd.isna(rsi) or pd.isna(atr):
+            continue
+        # ENTRY
+        if position == 0:
+            if rsi <= 30:
+                position = 1
+                entry_price = price
+                stop_loss = price - 2 * atr
+                entry_date = df.index[i]
+            elif rsi >= 70:
+                position = -1
+                entry_price = price
+                stop_loss = price + 2 * atr
+                entry_date = df.index[i]
+        # EXIT
+        else:
+            exit_trade = False
+            if position == 1:
+                if rsi >= 50 or price <= stop_loss:
+                    exit_trade = True
+            elif position == -1:
+                if rsi <= 50 or price >= stop_loss:
+                    exit_trade = True
+            if exit_trade:
+                pnl = (price - entry_price) * position
+                trades.append({
+                    "Entry Date": entry_date,
+                    "Exit Date": df.index[i],
+                    "Direction": position,
+                    "PnL": pnl
+                })
+                position = 0
+    return pd.DataFrame(trades)
+def performance_metrics(trades,sy):
+    if trades.empty:
+        return {}
+
+    wins = trades[trades["PnL"] > 0]
+    losses = trades[trades["PnL"] < 0]
+
+    return {
+        "Stok": sy,
+        "Trades": len(trades),
+        "Win Rate": round(len(wins) / len(trades), 2),
+        "Avg Win": wins["PnL"].mean(),
+        "Avg Loss": losses["PnL"].mean(),
+        "Expectancy": trades["PnL"].mean(),
+        "Total PnL": trades["PnL"].sum()
+    }
+def plot_price_with_trades(df, trades, ticker):
+    fig, ax = plt.subplots(figsize=(14, 6))
+
+    # Plot price
+    ax.plot(df.index, df["Close"], label="Close Price")
+
+    # Plot trades
+    for _, trade in trades.iterrows():
+        entry = trade["Entry Date"]
+        exit_ = trade["Exit Date"]
+        direction = trade["Direction"]
+
+        entry_price = df.loc[entry, "Close"]
+        exit_price = df.loc[exit_, "Close"]
+
+        if direction == 1:
+            ax.scatter(entry, entry_price, marker="^")
+            ax.scatter(exit_, exit_price, marker="v")
+        else:
+            ax.scatter(entry, entry_price, marker="v")
+            ax.scatter(exit_, exit_price, marker="^")
+
+        ax.plot([entry, exit_], [entry_price, exit_price])
+
+    ax.set_title(f"{ticker} – RSI Mean Reversion Trades")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Price")
+    ax.legend()
+
+    return fig
+#BACKTESTING MACD STRATEGY2
 def MACDIndicator(df):
     df['EMA12']= df.Close.ewm(span=12).mean()
     df['EMA26']= df.Close.ewm(span=26).mean()
@@ -58,6 +157,7 @@ def MACDIndicator(df):
     df.dropna()
     print('MACD indicators added')
     return df
+    
 # Plotly Charts
 def plot_chart(df):
     fig = go.Figure()
@@ -253,15 +353,18 @@ def main():
                     st.dataframe(df_funda[['Ticker','Net Income','Equity','Debt','PE','PB','d_ROE','d_Debt_Equity','Current_Ratio','EV_EBITDA','FCF','Value Score']])
             
             if st.button("Backtesting Strategy1"):
-                RSI_OVERVALUED = 70
-                RSI_UNDERVALUE = 30
+                
                 df = add_indicators(nifty_data)
                 df["ADX"] = compute_adx(df,14)
                 df['%Change'] = ((df['Close'] / df['EMA_50'])-1)*100
                 df = df.dropna()
-                st.plotly_chart(plot_chart(df), use_container_width=True)    
+                st.plotly_chart(plot_chart(df), use_container_width=True) 
+                trades = backtest_rsi_mean_reversion(df)
+                st.plotly_chart(plot_price_with_trades(df,trades,ticker))
+                metrics = performance_metrics(trades,ticker)
+                result = pd.DataFrame([metrics])
                 with st.expander("Show the Fundamentals",expanded = False):
-                    st.dataframe(df)
+                    st.dataframe(result)
                   
             if st.button("Analyze"):
                 df = add_indicators(nifty_data)
