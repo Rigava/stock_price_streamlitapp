@@ -232,6 +232,10 @@ def main():
                 st.info(data['Action'],icon="ℹ️")
                 st.info(data['Justification'],icon="✅")
                 st.warning(data['Risk'],icon="⚠️")
+                df_funda = pd.DataFrame(get_value_fundamentals(ticker))
+                df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
+                with st.expander("Show the Fundamentals",expanded = False):
+                    st.dataframe(df_funda[['Ticker','Net Income','Equity','Debt','PE','PB','ROE','Debt_Equity','Current_Ratio','EV_EBITDA','FCF','Value Score']])
                
             # Export data as CSV
             st.subheader("Export Data")
