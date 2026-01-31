@@ -6,6 +6,7 @@ import ta
 import plotly.graph_objects as go
 import json
 import pandas as pd
+import numpy as np
 
 #LLM Config
 from langchain_google_genai import ChatGoogleGenerativeAI
