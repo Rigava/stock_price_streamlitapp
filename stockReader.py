@@ -218,7 +218,14 @@ def main():
             nifty_data.columns = nifty_data.columns.get_level_values(0)
             latest_price = nifty_data['Close'].iloc[-1]
             st.success(f"The latest price of {symbol} is: {latest_price}")
-
+            if st.button("Get Data"):
+                df = add_indicators(nifty_data)
+                st.plotly_chart(plot_chart(df), use_container_width=True)    
+                df_funda = pd.DataFrame(get_value_fundamentals(ticker))
+                df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
+                with st.expander("Show the Fundamentals",expanded = False):
+                    st.dataframe(df_funda[['Ticker','Net Income','Equity','Debt','PE','PB','d_ROE','d_Debt_Equity','Current_Ratio','EV_EBITDA','FCF','Value Score']])
+             
             if st.button("Analyze"):
                 df = add_indicators(nifty_data)
                 st.plotly_chart(plot_chart(df), use_container_width=True)            
@@ -232,11 +239,7 @@ def main():
                 st.info(data['Action'],icon="ℹ️")
                 st.info(data['Justification'],icon="✅")
                 st.warning(data['Risk'],icon="⚠️")
-                df_funda = pd.DataFrame(get_value_fundamentals(ticker))
-                df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
-                with st.expander("Show the Fundamentals",expanded = False):
-                    st.dataframe(df_funda[['Ticker','Net Income','Equity','Debt','PE','PB','ROE','Debt_Equity','Current_Ratio','EV_EBITDA','FCF','Value Score']])
-               
+  
             # Export data as CSV
             st.subheader("Export Data")
             if st.button("Export as CSV"):
