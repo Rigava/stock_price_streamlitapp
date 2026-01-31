@@ -277,7 +277,7 @@ def main():
                 st.warning(data['Risk'],icon="⚠️")
       
                 # Export data as CSV
-             st.subheader("Export Data")
+                 st.subheader("Export Data")
              if st.button("Export as CSV"):
                  st.write("Exporting stock data as CSV...")
                  df.to_csv(f"{symbol}_data.csv", index=False)
