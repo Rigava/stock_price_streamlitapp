@@ -262,19 +262,19 @@ def main():
                 with st.expander("Show the Fundamentals",expanded = False):
                     st.dataframe(df)
                   
-              if st.button("Analyze"):
-                  df = add_indicators(nifty_data)
-                  st.plotly_chart(plot_chart(df), use_container_width=True)            
-                  summary = chart_summary(df)
-                  ai_response = get_analysis(summary,symbol)
-                  json_str = extract_json_object(ai_response)
-                  data = json.loads(json_str)
+            if st.button("Analyze"):
+                df = add_indicators(nifty_data)
+                st.plotly_chart(plot_chart(df), use_container_width=True)            
+                summary = chart_summary(df)
+                ai_response = get_analysis(summary,symbol)
+                json_str = extract_json_object(ai_response)
+                data = json.loads(json_str)
                   
-                  st.subheader("📊 Recommendation")
-                  st.info(data['Summary'],icon="ℹ️")
-                  st.info(data['Action'],icon="ℹ️")
-                  st.info(data['Justification'],icon="✅")
-                  st.warning(data['Risk'],icon="⚠️")
+                st.subheader("📊 Recommendation")
+                st.info(data['Summary'],icon="ℹ️")
+                st.info(data['Action'],icon="ℹ️")
+                st.info(data['Justification'],icon="✅")
+                st.warning(data['Risk'],icon="⚠️")
   
               # Export data as CSV
               st.subheader("Export Data")
