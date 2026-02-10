@@ -306,6 +306,7 @@ def main():
             df = yf.download(tickers=yf_tick, period="1y")
             df.columns = df.columns.get_level_values(0)
             df = MACDIndicator(df)
+            df = add_indicators(df)
             framelist.append(df)
             #Fetch fundamentals
             data.append( get_value_fundamentals(yf_tick))
@@ -316,6 +317,13 @@ def main():
                 if df['Decision MACD'].iloc[-1]=='Buy':    
                     Buy.append(stock)
                 elif df['Decision MACD'].iloc[-1]=='Sell':
+                    Sell.append(stock)
+                else:
+                    Hold.append(stock) 
+            if shortlist_option=="RSI":
+                if df["RSI"].iloc[-1] > rsi_low and df["RSI"].iloc[-2] < rsi_low: 
+                    Buy.append(stock)
+                elif df["RSI"].iloc[-1] < rsi_high and df["RSI"].iloc[-2] > rsi_high:
                     Sell.append(stock)
                 else:
                     Hold.append(stock)  
