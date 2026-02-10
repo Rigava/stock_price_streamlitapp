@@ -294,7 +294,7 @@ def main():
     symbol_list.remove("TATAMOTORS")
 
     #SHORTLIST FEATURE
-    shortlist_option = st.sidebar.selectbox("select strategy",["MACD","Value","Growth","RSI","Breakout"])
+    shortlist_option = st.sidebar.selectbox("select strategy",["RSI","MACD","Value","Breakout"])
     rsi_low = st.sidebar.slider("RSI low for buy", min_value=1, max_value=100, value=30, step=1)
     rsi_high = st.sidebar.slider("RSI high for sell", min_value=1, max_value=100, value=70, step=1) 
     if st.button("Shortlist", use_container_width=True):
