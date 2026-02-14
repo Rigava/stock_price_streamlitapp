@@ -298,38 +298,59 @@ def main():
     rsi_low = st.sidebar.slider("RSI low for buy", min_value=1, max_value=100, value=30, step=1)
     rsi_high = st.sidebar.slider("RSI high for sell", min_value=1, max_value=100, value=70, step=1) 
     if st.button("Shortlist", use_container_width=True):
-        Buy = []
-        Sell = []
-        Hold = []
-        framelist = [] # add OHLC data
-        data =[] # add fundamental data
+    
+        Buy, Sell, Hold = [], [], []
+        framelist = []
+        data = []
+    
+        tickers = [stock.upper()+".NS" for stock in symbol_list]
+    
+        all_data = yf.download(
+            tickers=tickers,
+            period="1y",
+            group_by='ticker',
+            threads=False
+        )
+    
         for stock in symbol_list:
+    
             yf_tick = stock.upper()+".NS"
-            df = yf.download(tickers=yf_tick, period="1y")
-            df.columns = df.columns.get_level_values(0)
+    
+            df = all_data[yf_tick].copy()
+    
             df = MACDIndicator(df)
             df = add_indicators(df)
+    
             framelist.append(df)
-            #Fetch fundamentals
-            data.append( get_value_fundamentals(yf_tick))
-
-
-            # Determine buy or sell recommendation based on last two rows of the data to provide buy & sell signals
-            if shortlist_option=="MACD":                
-                if df['Decision MACD'].iloc[-1]=='Buy':    
+    
+            data.append(get_value_fundamentals(yf_tick))
+    
+            time.sleep(0.5)
+    
+            if shortlist_option=="MACD":
+    
+                if df['Decision MACD'].iloc[-1]=='Buy':
                     Buy.append(stock)
+    
                 elif df['Decision MACD'].iloc[-1]=='Sell':
                     Sell.append(stock)
+    
                 else:
-                    Hold.append(stock) 
+                    Hold.append(stock)
+    
             if shortlist_option=="RSI":
-                if df["RSI"].iloc[-1] > rsi_low and df["RSI"].iloc[-2] < rsi_low: 
+    
+                if df["RSI"].iloc[-1] > rsi_low and df["RSI"].iloc[-2] < rsi_low:
                     Buy.append(stock)
+    
                 elif df["RSI"].iloc[-1] < rsi_high and df["RSI"].iloc[-2] > rsi_high:
                     Sell.append(stock)
+    
                 else:
-                    Hold.append(stock)  
+                    Hold.append(stock)
+    
         df_funda = pd.DataFrame(data)
+
 
         df_funda["Value Score"] = df_funda.apply(value_score, axis=1)
         with st.expander("Show the Fundamentals",expanded = False):
