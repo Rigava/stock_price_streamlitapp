@@ -113,7 +113,7 @@ period = st.sidebar.selectbox("Timeframe", ["6mo", "1y", "2y"])
 rsi_period = st.sidebar.slider("RSI Period", 7, 21, 14)
 
 data = []
-if st.button("Scan"):
+if st.button("RSI Scan"):
     with st.spinner("Scanning JPN NSE stocks..."):
         for ticker in selected_tickers:
             df = yf.download(ticker, period=period, progress=False)
@@ -133,14 +133,14 @@ if st.button("Scan"):
         
         
 
-        data.append({
-            "Ticker": ticker,
-            "LTP": latest_close,
-            "RSI": round(latest_rsi, 2),
-            "Valuation": classify_rsi(latest_rsi),
-            "Percent": latest_percent ,
-            "ADX Trend": classify_regime(latest_adx)
-        })
+            data.append({
+                "Ticker": ticker,
+                "LTP": latest_close,
+                "RSI": round(latest_rsi, 2),
+                "Valuation": classify_rsi(latest_rsi),
+                "Percent": latest_percent ,
+                "ADX Trend": classify_regime(latest_adx)
+            })
 
     result_df = pd.DataFrame(data)
     
