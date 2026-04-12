@@ -142,26 +142,26 @@ if st.button("Scan"):
             "ADX Trend": classify_regime(latest_adx)
         })
 
-result_df = pd.DataFrame(data)
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.subheader("🔴 Overvalued")
-    st.dataframe(
-        result_df[result_df["Valuation"] == "Overvalued"]
-        .sort_values("RSI", ascending=False)
-    )
-
-with col2:
-    st.subheader("⚪ Neutral")
-    st.dataframe(
-        result_df[result_df["Valuation"] == "Neutral"]
-    )
-
-with col3:
-    st.subheader("🟢 Undervalued")
-    st.dataframe(
-        result_df[result_df["Valuation"] == "Undervalued"]
-        .sort_values("RSI")
-    )
+    result_df = pd.DataFrame(data)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.subheader("🔴 Overvalued")
+        st.dataframe(
+            result_df[result_df["Valuation"] == "Overvalued"]
+            .sort_values("RSI", ascending=False)
+        )
+    
+    with col2:
+        st.subheader("⚪ Neutral")
+        st.dataframe(
+            result_df[result_df["Valuation"] == "Neutral"]
+        )
+    
+    with col3:
+        st.subheader("🟢 Undervalued")
+        st.dataframe(
+            result_df[result_df["Valuation"] == "Undervalued"]
+            .sort_values("RSI")
+        )
