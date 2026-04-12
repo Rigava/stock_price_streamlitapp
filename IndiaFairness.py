@@ -156,18 +156,18 @@ if st.button("RSI Scan"):
     with col1:
         st.subheader("🔴 Overvalued")
         st.dataframe(
-            result_df[result_df["Valuation"] == "Overvalued"][["Ticker","LTP","ATR","%Day","Trend"]]
+            result_df[result_df["Valuation"] == "Overvalued"][["Ticker","LTP","ATR","%Day"]]
             # .sort_values("RSI", ascending=False)
         )
     
     with col2:
         st.subheader("⚪ Neutral")
         st.dataframe(
-            result_df[result_df["Valuation"] == "Neutral"][["Ticker","LTP","ATR","%Day","Trend"]]
+            result_df[result_df["Valuation"] == "Neutral"][["Ticker","LTP","ATR","%Day"]]
         )
     
     with col3:
         st.subheader("🟢 Undervalued")
         st.dataframe(
-            result_df[result_df["Valuation"] == "Undervalued"][["Ticker","LTP","ATR","%Day","Trend"]]
+            result_df[result_df["Valuation"] == "Undervalued"][["Ticker","LTP","ATR","%Day"]]
         )
