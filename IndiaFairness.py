@@ -124,7 +124,11 @@ if st.button("RSI Scan"):
             df["ATR"] = compute_atr(df)
             df['SMA_50'] = df['Close'].rolling(50).mean()
             df= df.dropna()
-            df['%Change'] = ((df['Close'] / df['SMA_50'])-1)*100
+            
+            latest_close = df['Close'].iloc[-1]
+            last_day_close = df['Close'].iloc[-2]
+            df['%Change'] = (latest_close / last_day_close)-1)*100
+            
             latest_rsi = df["RSI"].iloc[-1]
             latest_adx = df["ADX"].iloc[-1]
             latest_atr = df["ATR"].iloc[-1]
@@ -138,9 +142,9 @@ if st.button("RSI Scan"):
                 "LTP": round(latest_close,0),
                 "RSI": round(latest_rsi, 0),
                 "ATR": round(latest_atr, 0),
+                "%Day": round(latest_percent,0) ,
                 "Valuation": classify_rsi(latest_rsi),
-                "Percent": latest_percent ,
-                "ADX Trend": classify_regime(latest_adx)
+                "Trend": classify_regime(latest_adx)
             })
 
     result_df = pd.DataFrame(data)
@@ -150,19 +154,19 @@ if st.button("RSI Scan"):
     with col1:
         st.subheader("🔴 Overvalued")
         st.dataframe(
-            result_df[result_df["Valuation"] == "Overvalued"]
+            result_df[result_df["Valuation"] == "Overvalued"][["Ticker","LTP","ATR","%Day","Trend"]]
             .sort_values("RSI", ascending=False)
         )
     
     with col2:
         st.subheader("⚪ Neutral")
         st.dataframe(
-            result_df[result_df["Valuation"] == "Neutral"]
+            result_df[result_df["Valuation"] == "Neutral"][["Ticker","LTP","ATR","%Day","Trend"]]
         )
     
     with col3:
         st.subheader("🟢 Undervalued")
         st.dataframe(
-            result_df[result_df["Valuation"] == "Undervalued"]
+            result_df[result_df["Valuation"] == "Undervalued"][["Ticker","LTP","ATR","%Day","Trend"]]
             .sort_values("RSI")
         )
