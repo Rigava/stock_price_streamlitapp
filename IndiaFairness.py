@@ -2,7 +2,31 @@ import streamlit as st
 import yfinance as yf
 import pandas as pd
 import numpy as np
-
+import requests
+#----------------NSE Website FNO symbols---------------------------------
+nifty_fno_url = "https://www.nseindia.com/api/market-data-pre-open?key=FO"
+def get_nifty50_list(session):
+    response = session.get(nifty_fno_url)
+    data = response.json()
+    symbols = list(set(item["metadata"]["symbol"] for item in data["data"]))
+    return symbols
+def create_session():
+    session = requests.Session()
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept": "application/json",
+        "Referer": "https://www.nseindia.com"
+    }
+    session.headers.update(headers)
+    session.get("https://www.nseindia.com")
+    return session
+session = create_session()
+symbols = get_nifty50_list(session)
+tickers=[]
+for sym in symbols:
+  tick = sym +'.NS'
+  tickers.append(tick)
 # rsi engine
 def compute_rsi(close, period=14):
     delta = close.diff()
@@ -74,11 +98,11 @@ def classify_regime(adx):
     else:
         return "Trend"
 
-tickers = [
-  "RELIANCE.NS", "LTF.NS","BEL.NS","JIOFIN.NS","COCHINSHIP.NS","HUDCO.NS","IREDA.NS","ADANIENT.NS","MOTHERSON.NS","NTPC.NS","IRCON.NS",
-"ADANIGREEN.NS","IOC.NS","DOLATALGO.NS","NMDC.NS","MAHABANK.NS","RITES.NS","JSWINFRA.NS","IRFC.NS","VBL.NS","MARINE.NS","NCC.NS","IFCI.NS","RIBINFRA.NS"
-]
-
+# tickers = [
+#   "RELIANCE.NS", "LTF.NS","BEL.NS","JIOFIN.NS","COCHINSHIP.NS","HUDCO.NS","IREDA.NS","ADANIENT.NS","MOTHERSON.NS","NTPC.NS","IRCON.NS",
+# "ADANIGREEN.NS","IOC.NS","DOLATALGO.NS","NMDC.NS","MAHABANK.NS","RITES.NS","JSWINFRA.NS","IRFC.NS","VBL.NS","MARINE.NS","NCC.NS","IFCI.NS","RIBINFRA.NS"
+# ]
+selected_tckers = st.sidebar.multiselect("Select your stocks",tickers)
 # Streamlit app
 # st.set_page_config(layout="wide")
 # --- PAGE SETUP ---
@@ -89,23 +113,23 @@ period = st.sidebar.selectbox("Timeframe", ["6mo", "1y", "2y"])
 rsi_period = st.sidebar.slider("RSI Period", 7, 21, 14)
 
 data = []
-
-with st.spinner("Scanning JPN NSE stocks..."):
-    for ticker in tickers:
-        df = yf.download(ticker, period=period, progress=False)
-        df.columns = df.columns.get_level_values(0)
-        if df.empty:
-            continue
-        df['symbol'] = ticker
-        df["RSI"] = compute_rsi(df["Close"], rsi_period)
-        df["ADX"] = compute_adx(df)    
-        df['SMA_50'] = df['Close'].rolling(50).mean()
-        df= df.dropna()
-        df['%Change'] = ((df['Close'] / df['SMA_50'])-1)*100
-        latest_rsi = df["RSI"].iloc[-1]
-        latest_adx = df["ADX"].iloc[-1]
-        latest_close = df['Close'].iloc[-1]
-        latest_percent = df['%Change'].iloc[-1]
+if st.button("Scan"):
+    with st.spinner("Scanning JPN NSE stocks..."):
+        for ticker in selected_tickers:
+            df = yf.download(ticker, period=period, progress=False)
+            df.columns = df.columns.get_level_values(0)
+            if df.empty:
+                continue
+            df['symbol'] = ticker
+            df["RSI"] = compute_rsi(df["Close"], rsi_period)
+            df["ADX"] = compute_adx(df)    
+            df['SMA_50'] = df['Close'].rolling(50).mean()
+            df= df.dropna()
+            df['%Change'] = ((df['Close'] / df['SMA_50'])-1)*100
+            latest_rsi = df["RSI"].iloc[-1]
+            latest_adx = df["ADX"].iloc[-1]
+            latest_close = df['Close'].iloc[-1]
+            latest_percent = df['%Change'].iloc[-1]
         
         
 
