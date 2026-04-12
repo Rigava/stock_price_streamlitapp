@@ -155,7 +155,7 @@ if st.button("RSI Scan"):
         st.subheader("🔴 Overvalued")
         st.dataframe(
             result_df[result_df["Valuation"] == "Overvalued"][["Ticker","LTP","ATR","%Day","Trend"]]
-            .sort_values("RSI", ascending=False)
+            # .sort_values("RSI", ascending=False)
         )
     
     with col2:
@@ -168,5 +168,4 @@ if st.button("RSI Scan"):
         st.subheader("🟢 Undervalued")
         st.dataframe(
             result_df[result_df["Valuation"] == "Undervalued"][["Ticker","LTP","ATR","%Day","Trend"]]
-            .sort_values("RSI")
         )
