@@ -100,9 +100,9 @@ def classify_regime(adx):
 
 jpn_tickers = [
   "RELIANCE.NS", "LTF.NS","BEL.NS","JIOFIN.NS","COCHINSHIP.NS","HUDCO.NS","IREDA.NS","ADANIENT.NS","MOTHERSON.NS","NTPC.NS",
-"ADANIGREEN.NS","IOC.NS","NMDC.NS","JSWINFRA.NS","IRFC.NS","VBL.NS","MARINE.NS","NCC.NS","IFCI.NS","RIBINFRA.NS"
+"ADANIGREEN.NS","IOC.NS","NMDC.NS","IRFC.NS","VBL.NS","MARINE.NS","NCC.NS","IFCI.NS","RIBINFRA.NS"
 ]
-removed=["IRCON.NS","DOLATALGO.NS","MAHABANK.NS","RITES.NS"]
+removed=["IRCON.NS","DOLATALGO.NS","MAHABANK.NS","RITES.NS","JSWINFRA.NS"]
 selected_tickers = st.sidebar.multiselect("Select your stocks",tickers,default = jpn_tickers,)
 # Streamlit app
 # st.set_page_config(layout="wide")
