@@ -102,7 +102,7 @@ def classify_regime(adx):
 #   "RELIANCE.NS", "LTF.NS","BEL.NS","JIOFIN.NS","COCHINSHIP.NS","HUDCO.NS","IREDA.NS","ADANIENT.NS","MOTHERSON.NS","NTPC.NS","IRCON.NS",
 # "ADANIGREEN.NS","IOC.NS","DOLATALGO.NS","NMDC.NS","MAHABANK.NS","RITES.NS","JSWINFRA.NS","IRFC.NS","VBL.NS","MARINE.NS","NCC.NS","IFCI.NS","RIBINFRA.NS"
 # ]
-selected_tckers = st.sidebar.multiselect("Select your stocks",tickers)
+selected_tickers = st.sidebar.multiselect("Select your stocks",tickers)
 # Streamlit app
 # st.set_page_config(layout="wide")
 # --- PAGE SETUP ---
