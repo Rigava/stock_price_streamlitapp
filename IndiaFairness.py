@@ -98,12 +98,11 @@ def classify_regime(adx):
     else:
         return "Trend"
 
-jpn_tickers = [
-  "RELIANCE.NS", "LTF.NS","BEL.NS","JIOFIN.NS","COCHINSHIP.NS","HUDCO.NS","IREDA.NS","ADANIENT.NS","MOTHERSON.NS","NTPC.NS","ADANIGREEN.NS","IOC.NS","NMDC.NS","IRFC.NS","VBL.NS"]
+jpn_tickers = ["RELIANCE.NS", "LTF.NS","BEL.NS","JIOFIN.NS","COCHINSHIP.NS","HUDCO.NS","IREDA.NS","ADANIENT.NS","MOTHERSON.NS","NTPC.NS","ADANIGREEN.NS","IOC.NS","NMDC.NS","IRFC.NS","VBL.NS"]
 removed=["IRCON.NS","DOLATALGO.NS","MAHABANK.NS","RITES.NS","JSWINFRA.NS","MARINE.NS","NCC.NS","IFCI.NS","RIBINFRA.NS"]
+
 selected_tickers = st.sidebar.multiselect("Select your stocks",tickers,default = jpn_tickers,)
-# Streamlit app
-# st.set_page_config(layout="wide")
+
 # --- PAGE SETUP ---
 st.set_page_config(page_title="JPN sailor", page_icon=":cop:",layout="wide")
 st.title("NSE RSI Valuation Scanner-start small think big")
@@ -121,12 +120,14 @@ if st.button("RSI Scan"):
                 continue
             df['symbol'] = ticker
             df["RSI"] = compute_rsi(df["Close"], rsi_period)
-            df["ADX"] = compute_adx(df)    
+            df["ADX"] = compute_adx(df) 
+            df["ATR"] = compute_atr(df)
             df['SMA_50'] = df['Close'].rolling(50).mean()
             df= df.dropna()
             df['%Change'] = ((df['Close'] / df['SMA_50'])-1)*100
             latest_rsi = df["RSI"].iloc[-1]
             latest_adx = df["ADX"].iloc[-1]
+            latest_atr = df["ATR"].iloc[-1]
             latest_close = df['Close'].iloc[-1]
             latest_percent = df['%Change'].iloc[-1]
         
@@ -134,8 +135,9 @@ if st.button("RSI Scan"):
 
             data.append({
                 "Ticker": ticker,
-                "LTP": latest_close,
-                "RSI": round(latest_rsi, 2),
+                "LTP": round(latest_close,0),
+                "RSI": round(latest_rsi, 0),
+                "ATR": round(latest_atr, 0),
                 "Valuation": classify_rsi(latest_rsi),
                 "Percent": latest_percent ,
                 "ADX Trend": classify_regime(latest_adx)
