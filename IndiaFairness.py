@@ -127,7 +127,7 @@ if st.button("RSI Scan"):
             
             latest_close = df['Close'].iloc[-1]
             last_day_close = df['Close'].iloc[-2]
-            df['%Change'] = (latest_close / last_day_close)-1)*100
+            df['%Change'] = ((latest_close / last_day_close)-1)*100
             
             latest_rsi = df["RSI"].iloc[-1]
             latest_adx = df["ADX"].iloc[-1]
