@@ -149,6 +149,8 @@ if st.button("RSI Scan"):
 
     result_df = pd.DataFrame(data)
     
+    with st.expander("View the data"):
+        st.dataframe(result_df)
     col1, col2, col3 = st.columns(3)
     
     with col1:
