@@ -26,6 +26,18 @@ def add_indicators(df):
     df["EMA_50"] = ta.trend.EMAIndicator(df["Close"], 50).ema_indicator()
     df["MACD"] = ta.trend.MACD(df["Close"]).macd()
     df["MACD_SIGNAL"] = ta.trend.MACD(df["Close"]).macd_signal()
+# Plotly Charts
+def plot_chart(df):
+    fig = go.Figure()
+    fig.add_candlestick(x=df.index, open=df["Open"], high=df["High"], low=df["Low"], close=df["Close"], name="Price")
+    fig.add_trace(go.Scatter(x=df.index,y=df["EMA_20"],name="EMA 20"))
+    fig.add_trace(go.Scatter(
+        x=df.index,
+        y=df["EMA_50"],
+        name="EMA 50"
+    ))
+    fig.update_layout(height=600)
+    return fig
 def chart_summary(df):
     latest = df.iloc[-1]
 
