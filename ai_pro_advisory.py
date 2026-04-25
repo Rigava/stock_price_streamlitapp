@@ -86,25 +86,25 @@ def main():
             nifty_data.columns = nifty_data.columns.get_level_values(0)
             latest_price = nifty_data['Close'].iloc[-1]
             st.success(f"The latest price of {symbol} is: {latest_price}")
-        if st.button("Analyze"):
-            df = add_indicators(nifty_data)
-            st.plotly_chart(plot_chart(df), use_container_width=True)            
-            summary = chart_summary(df)
-            ai_response = get_analysis(summary,symbol)
-            json_str = extract_json_object(ai_response)
-            data = json.loads(json_str)
-              
-            st.subheader("📊 Recommendation")
-            st.info(data['Summary'],icon="ℹ️")
-            st.info(data['Action'],icon="ℹ️")
-            st.info(data['Justification'],icon="✅")
-            st.warning(data['Risk'],icon="⚠️")
-            # Export data as CSV
-        if st.button("Export as CSV"):
-             st.write("Exporting stock data as CSV...")
-             df.to_csv(f"{symbol}_data.csv", index=False)
-             st.success("Stock data exported successfully!")
-       st.snow()
+            if st.button("Analyze"):
+                df = add_indicators(nifty_data)
+                st.plotly_chart(plot_chart(df), use_container_width=True)            
+                summary = chart_summary(df)
+                ai_response = get_analysis(summary,symbol)
+                json_str = extract_json_object(ai_response)
+                data = json.loads(json_str)
+                  
+                st.subheader("📊 Recommendation")
+                st.info(data['Summary'],icon="ℹ️")
+                st.info(data['Action'],icon="ℹ️")
+                st.info(data['Justification'],icon="✅")
+                st.warning(data['Risk'],icon="⚠️")
+                # Export data as CSV
+            if st.button("Export as CSV"):
+                 st.write("Exporting stock data as CSV...")
+                 df.to_csv(f"{symbol}_data.csv", index=False)
+                 st.success("Stock data exported successfully!")
+            st.snow()
       except Exception as e:
       st.error("Error occurred while fetching stock data.")
       st.error(e)
