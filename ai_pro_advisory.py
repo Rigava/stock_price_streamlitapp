@@ -102,6 +102,7 @@ def main():
         with st.expander("Show data"):
             st.dataframe(nifty_data)
         if st.button("Analyze"):
+            st.write(symbol)
             nifty_data = yf.download(tickers=symbol, period="5y")
             nifty_data.columns = nifty_data.columns.get_level_values(0)
             latest_price = nifty_data['Close'].iloc[-1]
