@@ -227,7 +227,7 @@ OUTPUT (STRICT JSON ONLY)
 "reasoning":"..."
 }}
 }}
-"""
+
     '''
 
     """
