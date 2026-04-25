@@ -15,9 +15,13 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 api_key = st.secrets.API_KEY
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=api_key)
 tickers = pd.read_html('https://ournifty.com/stock-list-in-nse-fo-futures-and-options.html#:~:text=NSE%20F%26O%20Stock%20List%3A%20%20%20%20SL,%20%201000%20%2052%20more%20rows%20')[0]
-symbol_list = tickers.SYMBOL.to_list()
-symbol_list= symbol_list[5:]
-symbol_list.remove("TATAMOTORS")
+tickers_list = tickers.SYMBOL.to_list()
+tickers_list= symbol_list[5:]
+tickers_list.remove("TATAMOTORS")
+symbol_list=[]
+for symbols in tickers_list:
+    s= symbols.upper() + ".NS"
+    s.append(symbol_list)
 symbol_list.append("^NSEI")
 # Technical Indicators utilities helper functions
 def add_indicators(df):
@@ -91,7 +95,7 @@ def main():
     st.title("📈 AI-Powered Technical analyst post")
     symbol = st.selectbox("Select stock symbol", symbol_list)
     if symbol:
-        ticker= symbol.upper() + ".NS"
+        
         try:
             nifty_data = yf.download(tickers=ticker, period="5y")
             nifty_data.columns = nifty_data.columns.get_level_values(0)
