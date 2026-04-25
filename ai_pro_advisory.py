@@ -70,7 +70,8 @@ def chart_summary(df):
     - Recent Low: {df['Close'].tail(20).min()}
     """
 def get_analysis(chart_summary,symbol):
-  prompt = f"""
+  prompt = f
+  """
 You are an institutional-grade quantitative trader and technical analyst.
 
 Your goal is NOT just to describe the market, but to generate a high-quality, executable trade decision with risk management and probabilistic thinking.
@@ -152,12 +153,10 @@ Reject if:
 - Weak momentum
 - Indicator conflict
 - Poor RR
-
 -----------------------------------
 OUTPUT FORMAT (STRICT JSON ONLY)
 -----------------------------------
-
-{
+{{
   "Symbol": "{symbol}",
   
   "Market Regime": "...",
@@ -170,44 +169,44 @@ OUTPUT FORMAT (STRICT JSON ONLY)
   
   "Action": "Buy/Sell/Hold/Avoid",
   
-  "Entry Strategy": {
+  "Entry Strategy": {{
     "Type": "Immediate/Pullback/Breakout",
     "Trigger": "..."
-  },
+  }},
   
-  "Trade Setup": {
+  "Trade Setup": {{
     "Entry": "...",
     "Stop Loss": "...",
     "Targets": ["...", "..."],
     "Risk Reward": "...",
     "Invalidation": "..."
-  },
+  }},
   
-  "Probability": {
+  "Probability": {{
     "Win Probability": "...%",
     "Edge Type": "Momentum/Mean Reversion/Breakout"
-  },
+  }},
   
-  "Scenarios": {
-    "Bullish": {
+  "Scenarios": {{
+    "Bullish": {{
       "Trigger": "...",
       "Action": "..."
-    },
-    "Bearish": {
+    }},
+    "Bearish": {{
       "Trigger": "...",
       "Action": "..."
-    },
-    "Sideways": {
+    }},
+    "Sideways": {{
       "Trigger": "...",
       "Action": "..."
-    }
-  },
+    }}
+  }},
   
-  "Take Trade": true/false,
+  "Take Trade": true,
   "Reason": "...",
   
   "Summary": "2-line professional trader note"
-}
+}}
 
 -----------------------------------
 CONSTRAINTS
