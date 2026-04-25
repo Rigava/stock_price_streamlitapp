@@ -106,8 +106,8 @@ def main():
                  st.success("Stock data exported successfully!")
             st.snow()
       except Exception as e:
-      st.error("Error occurred while fetching stock data.")
-      st.error(e)
+          st.error("Error occurred while fetching stock data.")
+          st.error(e)
 
 
 # Run the app
