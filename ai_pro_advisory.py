@@ -77,7 +77,7 @@ def extract_json_object(text):
     return json_text
 # -----------------------------------------Main functon-------------------------------------------------- #
 def main():
-  st.title("📈 AI-Powered Technical analyst post")
+    st.title("📈 AI-Powered Technical analyst post")
     symbol = st.selectbox("Select stock symbol", symbol_list)
     if symbol:
         ticker= symbol.upper() + ".NS"
