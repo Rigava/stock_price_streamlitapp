@@ -21,7 +21,7 @@ tickers_list.remove("TATAMOTORS")
 symbol_list=[]
 for symbols in tickers_list:
     s= symbols.upper() + ".NS"
-    s.append(symbol_list)
+    symbol_list.append(s)
 symbol_list.append("^NSEI")
 # Technical Indicators utilities helper functions
 def add_indicators(df):
