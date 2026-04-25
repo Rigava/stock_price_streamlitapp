@@ -94,36 +94,34 @@ def extract_json_object(text):
 def main():
     st.title("📈 AI-Powered Technical analyst post")
     symbol = st.selectbox("Select stock symbol", symbol_list)
-    if symbol:
-        
-        try:
-            nifty_data = yf.download(tickers=symbol, period="5y")
-            nifty_data.columns = nifty_data.columns.get_level_values(0)
-            latest_price = nifty_data['Close'].iloc[-1]
-            st.success(f"The latest price of {symbol} is: {latest_price}")
-            if st.button("Analyze"):
-                df = add_indicators(nifty_data)
-                with st.expander("Show data"):
-                    st.dataframe(df)
-                # st.plotly_chart(plot_chart(df), use_container_width=True)            
-                summary = chart_summary(df)
-                ai_response = get_analysis(summary,symbol)
-                json_str = extract_json_object(ai_response)
-                data = json.loads(json_str)
-                  
-                st.subheader("📊 Recommendation")
-                st.info(data['Action'],icon="ℹ️")
-                st.info(data['Justification'],icon="✅")
-                st.warning(data['Trade plan'],icon="⚠️")
-                # Export data as CSV
-            if st.button("Export as CSV"):
-                 st.write("Exporting stock data as CSV...")
-                 df.to_csv(f"{symbol}_data.csv", index=False)
-                 st.success("Stock data exported successfully!")
-            st.snow()
-        except Exception as e:
-          st.error("Error occurred while fetching stock data.")
-          st.error(e)
+    try:
+        nifty_data = yf.download(tickers=symbol, period="5y")
+        nifty_data.columns = nifty_data.columns.get_level_values(0)
+        latest_price = nifty_data['Close'].iloc[-1]
+        st.success(f"The latest price of {symbol} is: {latest_price}")
+        if st.button("Analyze"):
+            df = add_indicators(nifty_data)
+            with st.expander("Show data"):
+                st.dataframe(df)
+            # st.plotly_chart(plot_chart(df), use_container_width=True)            
+            summary = chart_summary(df)
+            ai_response = get_analysis(summary,symbol)
+            json_str = extract_json_object(ai_response)
+            data = json.loads(json_str)
+              
+            st.subheader("📊 Recommendation")
+            st.info(data['Action'],icon="ℹ️")
+            st.info(data['Justification'],icon="✅")
+            st.warning(data['Trade plan'],icon="⚠️")
+            # Export data as CSV
+        if st.button("Export as CSV"):
+             st.write("Exporting stock data as CSV...")
+             df.to_csv(f"{symbol}_data.csv", index=False)
+             st.success("Stock data exported successfully!")
+        st.snow()
+    except Exception as e:
+      st.error("Error occurred while fetching stock data.")
+      st.error(e)
 
 
 # Run the app
