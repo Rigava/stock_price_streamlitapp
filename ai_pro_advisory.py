@@ -105,7 +105,7 @@ def main():
                  df.to_csv(f"{symbol}_data.csv", index=False)
                  st.success("Stock data exported successfully!")
             st.snow()
-      except Exception as e:
+        except Exception as e:
           st.error("Error occurred while fetching stock data.")
           st.error(e)
 
