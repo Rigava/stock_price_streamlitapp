@@ -99,7 +99,12 @@ def main():
         nifty_data.columns = nifty_data.columns.get_level_values(0)
         latest_price = nifty_data['Close'].iloc[-1]
         st.success(f"The latest price of {symbol} is: {latest_price}")
+        with st.expander("Show data"):
+            st.dataframe(nifty_data)
         if st.button("Analyze"):
+            nifty_data = yf.download(tickers=symbol, period="5y")
+            nifty_data.columns = nifty_data.columns.get_level_values(0)
+            latest_price = nifty_data['Close'].iloc[-1]
             df = add_indicators(nifty_data)
             with st.expander("Show data"):
                 st.dataframe(df)
