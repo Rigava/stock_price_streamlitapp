@@ -43,43 +43,182 @@ def plot_chart(df):
     ))
     fig.update_layout(height=600)
     return fig
-def chart_summary(df):
+def enhanced_chart_summary(df):
     latest = df.iloc[-1]
+    prev = df.iloc[-5:]
 
     return f"""
-    Latest Close: {latest['Close']}
+    Latest:
+    Close: {latest['Close']}
     RSI: {latest['RSI']}
-    EMA 20: {latest['EMA_20']}
-    EMA 50: {latest['EMA_50']}
+    EMA20: {latest['EMA_20']}
+    EMA50: {latest['EMA_50']}
     MACD: {latest['MACD']}
     MACD Signal: {latest['MACD_SIGNAL']}
 
-    Trend:
-    - EMA 20 above EMA 50: {latest['EMA_20'] > latest['EMA_50']}
-    - RSI Overbought (>70): {latest['RSI'] > 70}
-    - RSI Oversold (<30): {latest['RSI'] < 30}
+    Trend Context:
+    - EMA20 Trend (5 periods): {prev['EMA_20'].is_monotonic_increasing}
+    - EMA50 Trend (5 periods): {prev['EMA_50'].is_monotonic_increasing}
+    - Price Momentum: {prev['Close'].iloc[-1] - prev['Close'].iloc[0]}
+
+    Momentum Context:
+    - RSI Direction: {"Rising" if prev['RSI'].iloc[-1] > prev['RSI'].iloc[0] else "Falling"}
+    - MACD Crossover Recent: {prev['MACD'].iloc[-1] > prev['MACD_SIGNAL'].iloc[-1]}
+
+    Structure:
+    - Recent High: {df['Close'].tail(20).max()}
+    - Recent Low: {df['Close'].tail(20).min()}
     """
 def get_analysis(chart_summary,symbol):
   prompt = f"""
-  You are a stock trader specializing in technical analysis at a top financial institution.
-  Provide a short summary of Industry fundamentals and overall macro economic factors affecting the {symbol}.
-  Based on short summary and the following technical indicators, provide:
-  1.Recommendation: Buy / Sell / Hold
-  2.Justification in simple language
-  3.Best trading plan based on the support and resistance with risk and reward information
+You are an institutional-grade quantitative trader and technical analyst.
 
-  Technical data:
-  {chart_summary}
+Your goal is NOT just to describe the market, but to generate a high-quality, executable trade decision with risk management and probabilistic thinking.
 
-  Provide the output in a valid JSON format with below fields and without escaped characters and formatting artifacts.
-  if the sample text does not contain enough information to provide the below fields return none but do not
-  create any information on your own.
-  '''
-  {{
-  "Action": "...",
-  "Justification":"...",
-  "Trade plan": "...."
-  }}'''
+-----------------------------------
+INPUT DATA
+-----------------------------------
+Symbol: {symbol}
+
+Technical Summary:
+{chart_summary}
+
+-----------------------------------
+INSTRUCTIONS
+-----------------------------------
+
+Follow this structured reasoning process:
+
+1. MARKET REGIME DETECTION
+Classify the current market condition:
+- Trending Up / Trending Down / Sideways / High Volatility
+
+Use EMA structure, RSI behavior, and MACD momentum.
+
+2. SIGNAL QUALITY SCORING
+Score the trade setup from 1 to 10 based on:
+- Indicator alignment (EMA, RSI, MACD)
+- Momentum strength
+- Noise / false signal risk
+
+3. INDICATOR CONFLICT ANALYSIS
+- Identify any contradictions between indicators
+- Resolve which signal has priority
+- If conflict is high → reduce confidence or avoid trade
+
+4. TRADE DECISION
+Provide one clear action:
+- Buy / Sell / Hold / Avoid
+
+Avoid forcing trades if setup is weak.
+
+5. ENTRY STRATEGY
+Define optimal entry:
+- Immediate / Pullback / Breakout
+
+Provide exact trigger condition (not vague).
+
+6. RISK MANAGEMENT (MANDATORY)
+Define:
+- Entry price (reference latest close if needed)
+- Stop Loss (logical, based on structure)
+- Targets (at least 2 levels)
+
+Ensure:
+- Minimum Risk:Reward = 1:2
+- If not achievable → mark trade as "Avoid"
+
+7. PROBABILITY & EDGE
+Estimate:
+- Win probability (%)
+- Type of edge:
+  (Momentum / Mean Reversion / Breakout)
+
+8. SCENARIO PLANNING
+Define 3 scenarios:
+- Bullish continuation
+- Bearish reversal
+- Sideways movement
+
+Each must include:
+- Trigger
+- Action
+
+9. TRADE FILTER
+Explicitly decide:
+- Should this trade be taken?
+
+Reject if:
+- Weak momentum
+- Indicator conflict
+- Poor RR
+
+-----------------------------------
+OUTPUT FORMAT (STRICT JSON ONLY)
+-----------------------------------
+
+{
+  "Symbol": "{symbol}",
+  
+  "Market Regime": "...",
+  
+  "Signal Score": 0,
+  "Trade Quality": "Weak/Average/Strong",
+  
+  "Indicator Conflict": "...",
+  "Conflict Resolution": "...",
+  
+  "Action": "Buy/Sell/Hold/Avoid",
+  
+  "Entry Strategy": {
+    "Type": "Immediate/Pullback/Breakout",
+    "Trigger": "..."
+  },
+  
+  "Trade Setup": {
+    "Entry": "...",
+    "Stop Loss": "...",
+    "Targets": ["...", "..."],
+    "Risk Reward": "...",
+    "Invalidation": "..."
+  },
+  
+  "Probability": {
+    "Win Probability": "...%",
+    "Edge Type": "Momentum/Mean Reversion/Breakout"
+  },
+  
+  "Scenarios": {
+    "Bullish": {
+      "Trigger": "...",
+      "Action": "..."
+    },
+    "Bearish": {
+      "Trigger": "...",
+      "Action": "..."
+    },
+    "Sideways": {
+      "Trigger": "...",
+      "Action": "..."
+    }
+  },
+  
+  "Take Trade": true/false,
+  "Reason": "...",
+  
+  "Summary": "2-line professional trader note"
+}
+
+-----------------------------------
+CONSTRAINTS
+-----------------------------------
+
+- Do NOT hallucinate missing data
+- If data is insufficient → return:
+  { "error": "Insufficient data" }
+
+- Keep reasoning concise but meaningful
+- No extra text outside JSON
   """
   response = llm.invoke(prompt)  # just pass plain string to LLM
   decoded_content = json.dumps(response.content)
@@ -110,7 +249,8 @@ def main():
             df = add_indicators(nifty_data)
             with st.expander("Show data"):
                 st.dataframe(df)
-            st.plotly_chart(plot_chart(df), use_container_width=True)            
+            st.plotly_chart(plot_chart(df), use_container_width=True) 
+            st.spinner("Analysing")
             summary = chart_summary(df)
             ai_response = get_analysis(summary,symbol)
             json_str = extract_json_object(ai_response)
