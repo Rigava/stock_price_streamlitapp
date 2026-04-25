@@ -43,7 +43,7 @@ def plot_chart(df):
     ))
     fig.update_layout(height=600)
     return fig
-def enhanced_chart_summary(df):
+def chart_summary(df):
     latest = df.iloc[-1]
     prev = df.iloc[-5:]
 
@@ -257,9 +257,9 @@ def main():
             data = json.loads(json_str)
               
             st.subheader("📊 Recommendation")
-            st.info(data['Action'],icon="ℹ️")
-            st.info(data['Justification'],icon="✅")
-            st.warning(data['Trade plan'],icon="⚠️")
+            # st.info(data['Action'],icon="ℹ️")
+            # st.info(data['Justification'],icon="✅")
+            # st.warning(data['Trade plan'],icon="⚠️")
             # Export data as CSV
         if st.button("Export as CSV"):
              st.write("Exporting stock data as CSV...")
