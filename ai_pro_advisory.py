@@ -69,160 +69,95 @@ def chart_summary(df):
     - Recent High: {df['Close'].tail(20).max()}
     - Recent Low: {df['Close'].tail(20).min()}
     """
-def get_analysis(chart_summary,symbol):
-  prompt = f
-  """
-You are an institutional-grade quantitative trader and technical analyst.
+def get_analysis(chart_summary, symbol):
+    
+    prompt = f"""
+    You are an institutional-grade quantitative trader and technical analyst.
+    
+    Your goal is NOT just to describe the market, but to generate a high-quality, executable trade decision with risk management and probabilistic thinking.
 
-Your goal is NOT just to describe the market, but to generate a high-quality, executable trade decision with risk management and probabilistic thinking.
+    Symbol: {symbol}
+    
+    Technical Summary:
+    {chart_summary}
+    
+    -----------------------------------
+    INSTRUCTIONS
+    -----------------------------------
+    
+    Follow this structured reasoning process:
+    
+    1. MARKET REGIME DETECTION
+    Classify the current market condition:
+    - Trending Up / Trending Down / Sideways / High Volatility
+    
+    Use EMA structure, RSI behavior, and MACD momentum.
+    
+    2. SIGNAL QUALITY SCORING
+    Score the trade setup from 1 to 10 based on:
+    - Indicator alignment (EMA, RSI, MACD)
+    - Momentum strength
+    - Noise / false signal risk
+    
+    3. INDICATOR CONFLICT ANALYSIS
+    - Identify any contradictions between indicators
+    - Resolve which signal has priority
+    - If conflict is high → reduce confidence or avoid trade
+    
+    4. TRADE DECISION
+    Provide one clear action:
+    - Buy / Sell / Hold / Avoid
+    
+    Avoid forcing trades if setup is weak.
+    
+    5. ENTRY STRATEGY
+    Define optimal entry:
+    - Immediate / Pullback / Breakout
+    
+    Provide exact trigger condition (not vague).
+    
+    6. RISK MANAGEMENT (MANDATORY)
+    Define:
+    - Entry price (reference latest close if needed)
+    - Stop Loss (logical, based on structure)
+    - Targets (at least 2 levels)
+    
+    Ensure:
+    - Minimum Risk:Reward = 1:2
+    - If not achievable → mark trade as "Avoid"
+    
+    7. PROBABILITY & EDGE
+    Estimate:
+    - Win probability (%)
+    - Type of edge:
+      (Momentum / Mean Reversion / Breakout)
+    
+    8. SCENARIO PLANNING
+    Define 3 scenarios:
+    - Bullish continuation
+    - Bearish reversal
+    - Sideways movement
+    
+    Each must include:
+    - Trigger
+    - Action
+    
+    9. TRADE FILTER
+    Explicitly decide:
+    - Should this trade be taken?
+    
+    Reject if:
+    - Weak momentum
+    - Indicator conflict
+    - Poor RR
 
------------------------------------
-INPUT DATA
------------------------------------
-Symbol: {symbol}
+    Provide the output in a valid JSON format with below fields and without escaped characters and formatting artifacts.
 
-Technical Summary:
-{chart_summary}
-
------------------------------------
-INSTRUCTIONS
------------------------------------
-
-Follow this structured reasoning process:
-
-1. MARKET REGIME DETECTION
-Classify the current market condition:
-- Trending Up / Trending Down / Sideways / High Volatility
-
-Use EMA structure, RSI behavior, and MACD momentum.
-
-2. SIGNAL QUALITY SCORING
-Score the trade setup from 1 to 10 based on:
-- Indicator alignment (EMA, RSI, MACD)
-- Momentum strength
-- Noise / false signal risk
-
-3. INDICATOR CONFLICT ANALYSIS
-- Identify any contradictions between indicators
-- Resolve which signal has priority
-- If conflict is high → reduce confidence or avoid trade
-
-4. TRADE DECISION
-Provide one clear action:
-- Buy / Sell / Hold / Avoid
-
-Avoid forcing trades if setup is weak.
-
-5. ENTRY STRATEGY
-Define optimal entry:
-- Immediate / Pullback / Breakout
-
-Provide exact trigger condition (not vague).
-
-6. RISK MANAGEMENT (MANDATORY)
-Define:
-- Entry price (reference latest close if needed)
-- Stop Loss (logical, based on structure)
-- Targets (at least 2 levels)
-
-Ensure:
-- Minimum Risk:Reward = 1:2
-- If not achievable → mark trade as "Avoid"
-
-7. PROBABILITY & EDGE
-Estimate:
-- Win probability (%)
-- Type of edge:
-  (Momentum / Mean Reversion / Breakout)
-
-8. SCENARIO PLANNING
-Define 3 scenarios:
-- Bullish continuation
-- Bearish reversal
-- Sideways movement
-
-Each must include:
-- Trigger
-- Action
-
-9. TRADE FILTER
-Explicitly decide:
-- Should this trade be taken?
-
-Reject if:
-- Weak momentum
-- Indicator conflict
-- Poor RR
------------------------------------
-OUTPUT FORMAT (STRICT JSON ONLY)
------------------------------------
-{{
-  "Symbol": "{symbol}",
-  
-  "Market Regime": "...",
-  
-  "Signal Score": 0,
-  "Trade Quality": "Weak/Average/Strong",
-  
-  "Indicator Conflict": "...",
-  "Conflict Resolution": "...",
-  
-  "Action": "Buy/Sell/Hold/Avoid",
-  
-  "Entry Strategy": {{
-    "Type": "Immediate/Pullback/Breakout",
-    "Trigger": "..."
-  }},
-  
-  "Trade Setup": {{
-    "Entry": "...",
-    "Stop Loss": "...",
-    "Targets": ["...", "..."],
-    "Risk Reward": "...",
-    "Invalidation": "..."
-  }},
-  
-  "Probability": {{
-    "Win Probability": "...%",
-    "Edge Type": "Momentum/Mean Reversion/Breakout"
-  }},
-  
-  "Scenarios": {{
-    "Bullish": {{
-      "Trigger": "...",
-      "Action": "..."
-    }},
-    "Bearish": {{
-      "Trigger": "...",
-      "Action": "..."
-    }},
-    "Sideways": {{
-      "Trigger": "...",
-      "Action": "..."
-    }}
-  }},
-  
-  "Take Trade": true,
-  "Reason": "...",
-  
-  "Summary": "2-line professional trader note"
-}}
-
------------------------------------
-CONSTRAINTS
------------------------------------
-
-- Do NOT hallucinate missing data
-- If data is insufficient → return:
-  { "error": "Insufficient data" }
-
-- Keep reasoning concise but meaningful
-- No extra text outside JSON
-  """
-  response = llm.invoke(prompt)  # just pass plain string to LLM
-  decoded_content = json.dumps(response.content)
-  dict_resp = json.loads(decoded_content)
-  return dict_resp  # <-- fix: .content
+    """
+    response = llm.invoke(prompt)  # just pass plain string to LLM
+    decoded_content = json.dumps(response.content)
+    dict_resp = json.loads(decoded_content)
+    return dict_resp  # <-- fix: .content
 # Helper functions
 def extract_json_object(text):
     start = text.find('{')
@@ -256,6 +191,7 @@ def main():
             data = json.loads(json_str)
               
             st.subheader("📊 Recommendation")
+            st.write(data)
             # st.info(data['Action'],icon="ℹ️")
             # st.info(data['Justification'],icon="✅")
             # st.warning(data['Trade plan'],icon="⚠️")
