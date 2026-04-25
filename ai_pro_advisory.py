@@ -103,14 +103,14 @@ def main():
         with st.expander("Show data"):
             st.dataframe(nifty_data)
         if st.button("Analyze"):
-            st.write(symbol)
-            nifty_data = yf.download(tickers=symbol, period="5y")
-            nifty_data.columns = nifty_data.columns.get_level_values(0)
-            latest_price = nifty_data['Close'].iloc[-1]
+            # st.write(symbol)
+            # nifty_data = yf.download(tickers=symbol, period="5y")
+            # nifty_data.columns = nifty_data.columns.get_level_values(0)
+            # latest_price = nifty_data['Close'].iloc[-1]
             df = add_indicators(nifty_data)
             with st.expander("Show data"):
                 st.dataframe(df)
-            # st.plotly_chart(plot_chart(df), use_container_width=True)            
+            st.plotly_chart(plot_chart(df), use_container_width=True)            
             summary = chart_summary(df)
             ai_response = get_analysis(summary,symbol)
             json_str = extract_json_object(ai_response)
