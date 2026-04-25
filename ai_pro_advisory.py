@@ -150,8 +150,85 @@ def get_analysis(chart_summary, symbol):
     - Weak momentum
     - Indicator conflict
     - Poor RR
-
+Do NOT hallucinate missing data.
+If insufficient data → return:
+{{"error": "Insufficient data"}}
+-----------------------------------
+OUTPUT (STRICT JSON ONLY)
+-----------------------------------
     Provide the output in a valid JSON format with below fields and without escaped characters and formatting artifacts.
+    '''
+{{
+"symbol":"{symbol}",
+
+"market_regime_detection":{{
+"classification":"...",
+"reasoning":"..."
+}},
+
+"signal_quality_scoring":{{
+"score":0,
+"reasoning":"..."
+}},
+
+"indicator_conflict_analysis":{{
+"conflicts":[
+"Conflict 1...",
+"Conflict 2..."
+],
+"resolution":"..."
+}},
+
+"trade_decision":"Buy/Sell/Hold/Avoid",
+
+"entry_strategy":{{
+"type":"Immediate/Pullback/Breakout/Confirmation",
+"trigger_condition":"..."
+}},
+
+"risk_management":{{
+"entry_price":0,
+"stop_loss":0,
+"targets":[
+{{
+"level":0,
+"description":"Target 1"
+}},
+{{
+"level":0,
+"description":"Target 2"
+}}
+],
+"risk_reward_ratio":"..."
+}},
+
+"probability_edge":{{
+"win_probability_percent":0,
+"type_of_edge":"Momentum/Mean Reversion/Breakout/Trend Continuation"
+}},
+
+"scenario_planning":{{
+"bullish_continuation":{{
+"trigger":"...",
+"action":"..."
+}},
+"bearish_reversal":{{
+"trigger":"...",
+"action":"..."
+}},
+"sideways_movement":{{
+"trigger":"...",
+"action":"..."
+}}
+}},
+
+"trade_filter":{{
+"should_be_taken":true,
+"reasoning":"..."
+}}
+}}
+"""
+    '''
 
     """
     response = llm.invoke(prompt)  # just pass plain string to LLM
