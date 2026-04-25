@@ -61,7 +61,7 @@ def get_analysis(chart_summary,symbol):
   Based on short summary and the following technical indicators, provide:
   1.Recommendation: Buy / Sell / Hold
   2.Justification in simple language
-  3.Risk factors
+  3.Best trading plan based on the support and resistance with risk and reward information
 
   Technical data:
   {chart_summary}
@@ -71,10 +71,9 @@ def get_analysis(chart_summary,symbol):
   create any information on your own.
   '''
   {{
-  "Summary::"...",
   "Action": "...",
   "Justification":"...",
-  "Risk": "...."
+  "Trade plan": "...."
   }}'''
   """
   response = llm.invoke(prompt)  # just pass plain string to LLM
@@ -100,17 +99,18 @@ def main():
             st.success(f"The latest price of {symbol} is: {latest_price}")
             if st.button("Analyze"):
                 df = add_indicators(nifty_data)
-                st.plotly_chart(plot_chart(df), use_container_width=True)            
+                with st.expander("Show data"):
+                    st.dataframe(df)
+                # st.plotly_chart(plot_chart(df), use_container_width=True)            
                 summary = chart_summary(df)
                 ai_response = get_analysis(summary,symbol)
                 json_str = extract_json_object(ai_response)
                 data = json.loads(json_str)
                   
                 st.subheader("📊 Recommendation")
-                st.info(data['Summary'],icon="ℹ️")
                 st.info(data['Action'],icon="ℹ️")
                 st.info(data['Justification'],icon="✅")
-                st.warning(data['Risk'],icon="⚠️")
+                st.warning(data['Trade plan'],icon="⚠️")
                 # Export data as CSV
             if st.button("Export as CSV"):
                  st.write("Exporting stock data as CSV...")
